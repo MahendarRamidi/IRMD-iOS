@@ -9,10 +9,6 @@
 
 import UIKit
 import CoreData
-import AppCenter
-import AppCenterAnalytics
-import AppCenterCrashes
- 
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,8 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
-        MSAppCenter.start("df98d42c-d97a-42e4-ab33-9ac4aefee8d6", withServices:[ MSAnalytics.self, MSCrashes.self ])
         // Override point for customization after application launch.
         
         //third party Library for the uitextfield and uitextView
@@ -33,8 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
                 
         return true
-        
-        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

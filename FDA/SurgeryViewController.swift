@@ -1,4 +1,4 @@
-   //
+//
 //  SurgeryViewController.swift
 //  FDA
 //
@@ -26,7 +26,6 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
     var datePicker : UIPickerView!
     var typePickerView: UIPickerView = UIPickerView()
     var selectedTray : String?
-    var dicionaryForTray :[String: Any] = [:]
     var i = 0
     
     var caseId:Any! = nil
@@ -104,7 +103,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
     
     override func viewWillAppear(_ animated: Bool)
     {
-        trayTableView.reloadData()        
+        trayTableView.reloadData()
     }
     
     /*------------------------------------------------------
@@ -180,6 +179,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
             else
             {
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString, viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
             }
             
         })
@@ -201,16 +201,19 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
             let destVC = segue.destination as! GoToTrayViewController
             destVC.totalNumberOfTrays = trayArr.count
             destVC.trayNumber = 1
+            destVC.trayType = trayType
             destVC.arrTrayType = self.arrTrayType
             destVC.caseId = self.caseId
             destVC.dicForsaveTrays = dicForsaveTrays
             destVC.trayArr = trayArr
+            
         }
         if segue.identifier == Constants.kgotoPostSurgery
         {
             let destVC = segue.destination as! AcceptTrayStep1ViewController
             destVC.dicForsaveTrays = dicForsaveTrays
             destVC.arrTrayType = self.arrTrayType
+            destVC.trayType = trayType
             destVC.totalNumberOfTrays = trayArr.count
             destVC.trayNumber = 1
         }
@@ -422,7 +425,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
                  will prepare the dictionary using patientId, surgeonName, surgeryTypeId and date
                  ------------------------------------------------------*/
                 
-                dicionaryForTray = [Constants.kpatientId:dicForsaveTrays[Constants.kpatientId] as! String,Constants.ksurgeonName:dicForsaveTrays[Constants.ksurgeonName]  as! String,Constants.ksurgeryTypeId:dicForsaveTrays[Constants.ksurgeryTypeId]  as! String,"date":dicForsaveTrays["date"]  as! String] as Dictionary<String,Any>
+                let dicionaryForTray = [Constants.kpatientId:dicForsaveTrays[Constants.kpatientId] as! String,Constants.ksurgeonName:dicForsaveTrays[Constants.ksurgeonName]  as! String,Constants.ksurgeryTypeId:dicForsaveTrays[Constants.ksurgeryTypeId]  as! String,"date":dicForsaveTrays["date"]  as! String] as Dictionary<String,Any>
                 
                 CommanMethods.addProgrssView(aStrMessage: "", isActivity: false)
                 
@@ -441,11 +444,12 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
                         /*------------------------------------------------------
                           Calling method caseDetailsApiCall for getting the case details using parameter   dicionaryForTray consisting of patientId, surgeonName, surgeryTypeId and date
                          ------------------------------------------------------*/
-                        let dictTemp = NSMutableDictionary.init(dictionary: self.dicForsaveTrays)
                         
-                        self.caseDetailsApiCall(dicionaryForTray: self.dicionaryForTray)
+                        self.caseDetailsApiCall(dicionaryForTray: dicionaryForTray)
                         
                         CommanMethods.removeProgrssView(isActivity: true)
+
+                        let dictTemp = NSMutableDictionary.init(dictionary: self.dicForsaveTrays)
                         
                         self.arrTrayType = NSMutableArray.init()
                         
@@ -501,6 +505,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
                     else
                     {
                         CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString, viewController: self, type: 1)
+//                        self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                     }
                 })
                 
@@ -560,6 +565,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
                     else
                     {
                         CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString, viewController: self, type: 1)
+//                        self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                     }
                 })
                 
@@ -617,6 +623,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
                     else
                     {
                         CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString, viewController: self, type: 1)
+//                        self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                     }
                 })
                 
@@ -649,7 +656,6 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
          api calling for the tray listing
          ------------------------------------------------------*/
         
-        let dictTemp = NSMutableDictionary.init(dictionary: self.dicForsaveTrays)
         SurgeryViewWebservises().getCaseDetails(dicionaryForTray, Constants.getrelatedcasedetails,{(response,err) in
             
             CommanMethods.removeProgrssView(isActivity: true)
@@ -660,6 +666,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
             else
             {
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString, viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
             }
         })
     }
@@ -701,12 +708,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        /*------------------------------------------------------
-         Below code is for rearrangement of the tray that is being selected. the logic is below
-         Eg. if user has selected tray at index 3
-         then until index 2 all tray will be saved in selectedRange var.
-         then trayArr data will be removed until index 2 and that removed data that is saved in selectedRange will be added to trayArr later the last index.
-         ------------------------------------------------------*/
+        
         let selectedRange = trayArr[0..<indexPath.row]
         trayArr.removeSubrange(0..<indexPath.row)
         trayArr = trayArr + selectedRange
@@ -721,26 +723,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
         arrTraydata.removeAll()
         for obj in trayArr
         {
-            /*------------------------------------------------------
-             below code wont be needed.
-             ------------------------------------------------------*/
-            arrTraydic.append([Constants.kstrtrayId:obj["trayNumber"]!] as Dictionary<String,Any>)
-        }
-        
-        /*------------------------------------------------------
-         Updated on : 11 Jan 2018 12:16 PM
-         
-         Updation reason : The below code is moved from caseIdApiCall method to here after updation in trayArr data
-         
-         The below code will fill the array of tray type that will save the tray type according to selected type of tray and then this array will get compare will tray type in every screen where we need to display the edit implant screen
-         ------------------------------------------------------*/
-        let arrTemp = NSMutableArray.init(array: self.trayArr)
-        
-        self.arrTrayType = NSMutableArray.init()
-        
-        for i in 0 ..< self.trayArr.count
-        {
-            self.arrTrayType.add(((arrTemp.object(at: i) as! NSDictionary).value(forKey: "product") as! NSDictionary).value(forKey: "type") as! NSString)
+            arrTraydic.append([Constants.kstrtrayId:obj["id"]!] as Dictionary<String,Any>)
         }
         
         CommanMethods.addProgrssView(aStrMessage: Constants.kstrLoading, isActivity: true)
@@ -768,19 +751,64 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
     {
         /*------------------------------------------------------
          api calling for the tray listing
-         
-         Updated on       : 11-Jan-2018
-         Updation purpose : The api getasseblydetailsbyid api has been removed so for fetching casedetails and preparign dictionary dicForsaveTrays we are using getrelatedcasedetails api and data that we get in response we insert in trayData key in dicForsaveTrays dictionary.
          ------------------------------------------------------*/
-        let dictTemp = NSMutableDictionary.init(dictionary: self.dicForsaveTrays)
-        SurgeryViewWebservises().getCaseDetails(dicionaryForTray, Constants.getrelatedcasedetails,{(response,err) in
-            
+        
+        SurgeryViewWebservises().getScanPatient(arrTraydic[i], Constants.getsearchtraybyid,{(response,err) in
+
             if response != nil
             {
-                self.caseId = response
-                let dic = response
+                var arrCasedetails = (response![Constants.kstrPreAssembly] as! [[String:Any]]).flatMap { $0[Constants.kstrcaseDetails] } as! [[String:AnyObject]]
                 
-                self.arrTraydata.append([Constants.kcaseID : dic!["id"]!,Constants.ktrayData:response as Any])
+                let formatter = DateFormatter()
+                
+                formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                
+                arrCasedetails = arrCasedetails.sorted
+                {
+                    formatter.date(from: $0[Constants.kstrcaseDate]! as! String)?.compare(formatter.date(from: $1[Constants.kstrcaseDate]! as! String)!) != .orderedAscending
+                }
+                
+                var dicCaseDetails:[[String:Any]]! = [[String:Any]]()
+                
+                for obj in arrCasedetails
+                {
+                    dicCaseDetails.append([Constants.kstrcaseDetails : obj])
+                }
+                
+                var newResponse = response!
+                
+                newResponse[Constants.kstrPreAssembly] = dicCaseDetails
+                
+                /*------------------------------------------------------
+                 The below code will fill the array of tray type that will save the tray type according to selected type of tray and then this array will get compare will tray type in every screen where we need to display the edit implant screen
+                 ------------------------------------------------------*/
+                let arrTemp = NSMutableArray.init(array: self.trayArr)
+                
+                self.arrTrayType = NSMutableArray.init()
+                
+                for i in 0 ..< self.trayArr.count
+                {
+                    self.arrTrayType.add(((arrTemp.object(at: i) as! NSDictionary).value(forKey: "product") as! NSDictionary).value(forKey: "type") as! NSString)
+                }
+                
+                var abc = NSDictionary.init()
+                
+                if((newResponse[Constants.kstrPreAssembly] as! NSArray).count > 0)
+                {
+                    abc = (newResponse[Constants.kstrPreAssembly] as! NSArray).firstObject as! NSDictionary
+                }
+                else
+                {
+                    abc = (newResponse[Constants.kstrrefAssembly] as! NSArray).firstObject as! NSDictionary
+                }
+                
+                let dic = abc[Constants.kstrcaseDetails] as! NSDictionary
+                                
+                self.arrTraydata.append([Constants.kcaseID : dic["id"]!,Constants.ktrayData:newResponse])
+                
+                let dictTemp = NSMutableDictionary.init(dictionary: newResponse)
+
+                self.trayType = ((dictTemp.value(forKey: "product") as! NSMutableDictionary).value(forKey: "type")) as! NSString
                 
                 if(self.i < self.trayArr.count - 1)
                 {
@@ -791,13 +819,15 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
                 {
                     self.dicForsaveTrays[Constants.ktrayData] = self.arrTraydata
                     CommanMethods.removeProgrssView(isActivity: true)
-                }
+                }                
             }
             else
             {
+                CommanMethods.removeProgrssView(isActivity: true)
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString, viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
             }
-        })        
+        })
     }
     
     /*------------------------------------------------------
@@ -824,29 +854,23 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
     
     @IBAction func addTrayPressed (sender : UIButton)
     {
-//        var popToVC : LandingViewController?
-//        for vc in (self.navigationController?.viewControllers)!
-//        {
-//            if vc is LandingViewController
-//            {
-//                popToVC = vc as? LandingViewController
-//                popToVC?.goToScan = true
-//                popToVC?.callerClass = ""
-//                popToVC?.isForAddTray = true
-//                popToVC?.caseId = self.caseId
-//            }
-//        }
-//        if let vc = popToVC
-//        {
-//            self.navigationController?.popToViewController(vc, animated: false)
-//        }
-        let scanTrayVC = self.storyboard?.instantiateViewController(withIdentifier: Constants.kScanBarcodeHomeViewController) as! ScanBarcodeHomeViewController
-        
-        scanTrayVC.caseId = self.caseId
-        
-        scanTrayVC.isForAddTray = true
-        
-        self.navigationController?.pushViewController(scanTrayVC, animated: true)
+        var popToVC : LandingViewController?
+        for vc in (self.navigationController?.viewControllers)!
+        {
+            if vc is LandingViewController
+            {
+                popToVC = vc as? LandingViewController
+                popToVC?.goToScan = true
+                popToVC?.callerClass = ""
+                popToVC?.isForAddTray = true
+                popToVC?.caseId = self.caseId
+                
+            }
+        }
+        if let vc = popToVC
+        {
+            self.navigationController?.popToViewController(vc, animated: false)
+        }
     }
     
     @IBAction func openMenu(_ sender: UIButton)
@@ -885,6 +909,7 @@ class SurgeryViewController: UIViewController, UIPickerViewDataSource, UIPickerV
             else
             {
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString, viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
             }
         })
         

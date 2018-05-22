@@ -1,4 +1,4 @@
-      //
+//
 //  AppDelegate.swift
 //  Sample
 //
@@ -77,9 +77,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate,CustomAlertDele
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        
-        emailTextField.text = "test1@test.com"
-        passwdTextField.text = "abcd"
         
         /*------------------------------------------------------
         dummy login for testing purpose

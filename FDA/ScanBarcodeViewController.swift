@@ -37,7 +37,7 @@ class ScanBarcodeViewController: UIViewController {
 
         let dicionaryForTray = [Constants.kstrtrayId:btn.accessibilityValue!] as Dictionary<String,Any>
         
-//        let dicionaryForTray = [Constants.kstrtrayId:"bar1"] as Dictionary<String,Any>
+//        let dicionaryForTray = [Constants.kstrtrayId:"bar4"] as Dictionary<String,Any>
         
         CommanMethods.addProgrssView(aStrMessage: Constants.kstrLoading, isActivity: true)
         
@@ -143,8 +143,6 @@ class ScanBarcodeViewController: UIViewController {
                 
                 self.trayType = (dictTemp?["type"] as? NSString)!
                 
-                self.arrTrayType = NSMutableArray.init()
-                
                 self.arrTrayType.add(self.trayType)
                 
                 if(self.isForAddTray == true)
@@ -220,7 +218,6 @@ class ScanBarcodeViewController: UIViewController {
         {
             let obj  =  segue.destination as! AddTrayController
             obj.tray = tray
-            obj.isForAddTray = isForAddTray
             obj.dicForsaveTrays = dicForsaveTrays
             obj.trayType = trayType
             obj.arrTrayType = arrTrayType

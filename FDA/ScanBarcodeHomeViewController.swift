@@ -1,4 +1,4 @@
- //
+//
 //  ScanBarcodeHomeViewController.swift
 //  FDA
 //
@@ -19,7 +19,7 @@ class ScanBarcodeHomeViewController: UIViewController {
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
+
         var popToVC : LandingViewController?
         var popToVC1 : ChooseWorkflowViewController?
         for vc in (self.navigationController?.viewControllers)!
@@ -63,7 +63,6 @@ class ScanBarcodeHomeViewController: UIViewController {
         {
             let obj  =  segue.destination as! AddTrayController
             obj.tray = tray
-            obj.isForAddTray = isForAddTray
             obj.dicForsaveTrays = dicForsaveTrays
             obj.arrTrayType = arrTrayType
             obj.trayType = trayType
@@ -126,11 +125,11 @@ class ScanBarcodeHomeViewController: UIViewController {
             
             if(self.isForAddTray == true)
             {
-                apiName = Constants.ksearchtraybynumberforassigntray
+                apiName = Constants.ksearchtraybyidforassigntray
             }
             else
             {
-                apiName = Constants.ksearchtraybytraynumber
+                apiName = Constants.getsearchtraybyid
             }
             
             SurgeryViewWebservises().getScanPatient(dicionaryForTray, apiName ,{(response,err) in
@@ -149,7 +148,7 @@ class ScanBarcodeHomeViewController: UIViewController {
                 
                 if response != nil
                 {
-                    self.dicForsaveTrays[Constants.kstrtrayId] = ["\(response!["id"]!)"]
+                    self.dicForsaveTrays[Constants.kstrtrayId] = [trayID]
                     
                     var arrCasedetails = [[String:AnyObject]]()
                     
@@ -193,14 +192,12 @@ class ScanBarcodeHomeViewController: UIViewController {
                         }
                     }
                     
-                    self.tray?[Constants.kstrtrayId] = (response!["id"]!)
+                    self.tray?[Constants.kstrtrayId] = trayID
                     //self.dicForsaveTrays["PreSurgery"] = response!
                     
                     let dictTemp = response![Constants.kproduct] as? [String:Any]
                     
                     self.trayType = (dictTemp?["type"] as? NSString)!
-                    
-                    self.arrTrayType = NSMutableArray.init()
                     
                     self.arrTrayType.add(self.trayType)
                     

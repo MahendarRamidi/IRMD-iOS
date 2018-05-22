@@ -250,7 +250,7 @@ class EditImplantsViewController: UIViewController {
                     }
                 }
                 
-                if response != nil && response![Constants.kstatusFlag] as! Int == 0
+                if response != nil && response![Constants.kstatusFlag] as! Int != 1
                 {
                     let preimage = self.dicForImageRecognitionResponse[Constants.kPreImage] as! String
                     self.dicForImageRecognitionResponse = response!
@@ -343,7 +343,7 @@ class EditImplantsViewController: UIViewController {
                 }
                 else
                 {
-                    actionsheet.message = "Please Try Again"
+                    actionsheet.message = "Wrong Response"
                     okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                         
                         self.isDetectedImageIsAdded = false

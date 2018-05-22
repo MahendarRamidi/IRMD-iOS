@@ -8,9 +8,8 @@
 
 import UIKit
 
-class ScanBarcodePatientDetailsViewController: UIViewController
-{
-    var isForAddTray : Bool = false
+class ScanBarcodePatientDetailsViewController: UIViewController {
+
     var tray :Dictionary <String,Any>! = nil
     var trayType : NSString = ""
     var arrTrayType : NSMutableArray = NSMutableArray.init()
@@ -51,17 +50,6 @@ class ScanBarcodePatientDetailsViewController: UIViewController
         }
     }
 
-    override func viewWillAppear(_ animated: Bool)
-    {
-        /*------------------------------------------------------
-         The below code will only execute if the flow is add tray flow as we need to hide the back button only when it is add tray flow.
-         ------------------------------------------------------*/
-        if isForAddTray
-        {
-            self.navigationItem.hidesBackButton = true;
-        }
-    }
-    
     override func didReceiveMemoryWarning()
     {
         super.didReceiveMemoryWarning()

@@ -45,7 +45,7 @@ class AcceptTrayStep2PreSurgeryViewController: UIViewController {
             destVC.trayNumber = 1
             destVC.totalNumberOfTrays = totalNumberOfTrays
             destVC.trayType = trayType
-            destVC.arrTrayType = arrTrayType  
+            destVC.arrTrayType = arrTrayType
             destVC.dicForsaveTrays = dicForsaveTrays
             //destVC.image = image
 //            destVC.newAssemblyID = newAssemblyID

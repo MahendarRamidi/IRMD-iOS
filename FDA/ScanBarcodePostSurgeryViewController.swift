@@ -58,18 +58,18 @@ class ScanBarcodePostSurgeryViewController: UIViewController,UIImagePickerContro
                     let dic = NSMutableDictionary()
                     dic.setValue("\(tray[Constants.kstrholeNumber]!)", forKey: Constants.kHOLE_NUMBER)
                     
-                    if ((tray[Constants.kscrewStatus]! as! String).lowercased() == "present"
-                        || (tray[Constants.kscrewStatus]! as! String).lowercased() == "other")
-                    {
-                        dic.setValue("1", forKey: Constants.kSCREW_ID)
+                    if let _ = (tray[Constants.kscrewId] as? [String:Any]){
+                        
+                        let str = (tray[Constants.kscrewId]! as! [String:Any])["id"]
+                        dic.setValue("\(str!)", forKey: Constants.kSCREW_ID)
                     }
-                    else
-                    {
-                        dic.setValue("0", forKey: Constants.kSCREW_ID)
+                    else{
+                    
+                        dic.setValue("", forKey: Constants.kSCREW_ID)
                     }
                     
                     dic.setValue((tray[Constants.ktrayGroup]! as! NSString).integerValue, forKey: Constants.kTRAY_GROUP)
-                    //dic.setValue("\(tray[Constants.kscrewStatus]!)", forKey: Constants.kSCREW_STATUS)
+                    dic.setValue("\(tray[Constants.kscrewStatus]!)", forKey: Constants.kSCREW_STATUS)
                     if(self.arrTrayBaseline != nil)
                     {
                         self.arrTrayBaseline.append(dic as! [String : Any])
@@ -337,7 +337,7 @@ class ScanBarcodePostSurgeryViewController: UIViewController,UIImagePickerContro
                     }
                 }
                 
-                if response != nil && response![Constants.kstatusFlag] as! Int == 0
+                if response != nil && response![Constants.kstatusFlag] as! Int != 1
                 {
                     self.dicForImageRecognitionResponse = response!
                     self.dicForImageRecognitionResponse [Constants.kPreImage] = strBase64
@@ -387,11 +387,15 @@ class ScanBarcodePostSurgeryViewController: UIViewController,UIImagePickerContro
             
             /*------------------------------------------------------
              The below api will get called by passing the parameter of current image and then will be updating the image.
-             ----------------------     --------------------------------*/
+             ------------------------------------------------------*/
             
             updateTrayPictureWebservice().postTrayImage([:], urlString, imageView.image!, { (response, err) in
                 
                 CommanMethods.removeProgrssView(isActivity: true)
+                
+//                let actionsheet = UIAlertController.init(title: "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                
+//                var okButton:UIAlertAction! = nil
                 
                 if let msg:String = response?[Constants.kstrmessage] as? String
                 {
@@ -399,6 +403,7 @@ class ScanBarcodePostSurgeryViewController: UIViewController,UIImagePickerContro
                     {
                         CommanMethods.removeProgrssView(isActivity: true)
                         CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+//                        self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                         return
                     }
                 }
@@ -407,7 +412,7 @@ class ScanBarcodePostSurgeryViewController: UIViewController,UIImagePickerContro
                 {
                     self.differentiateAlertView = 0
                     
-                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kPost_Surgery_Image_Captured as NSString, viewController: self, type:1)
+                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kAlert_Image_updated as NSString, viewController: self, type:1)
 
 //                    actionsheet.message = Constants.kAlert_Image_updated
 //                    okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -419,7 +424,7 @@ class ScanBarcodePostSurgeryViewController: UIViewController,UIImagePickerContro
                 {
                     self.differentiateAlertView = 0
                     
-                    CommanMethods.alertView(alertView: self.alertView, message: "Please Try Again" as NSString, viewController: self, type:1)
+                    CommanMethods.alertView(alertView: self.alertView, message: "Wrong Response" as NSString, viewController: self, type:1)
                     
 //                    actionsheet.message = "Wrong Response"
 //                    okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in

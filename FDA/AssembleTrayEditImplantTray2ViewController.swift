@@ -18,7 +18,6 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
     var arrButtonImageRemoved : NSArray = []
     var arrButtonImagePresent : NSArray = []
     var arrButtonImageSelected : NSArray = []
-    var screwID : NSString = ""
     var arrButtonImagePlain : NSArray = []
     var isPinSelected = 0
     var tray :Dictionary <String,Any>! = nil
@@ -60,9 +59,6 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
     @IBOutlet weak var btnA3: UIButton!
     @IBOutlet weak var btnA2: UIButton!
     @IBOutlet weak var btnA1: UIButton!
-    
-    var arrScrewSelected : NSMutableArray = NSMutableArray.init()
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -136,15 +132,6 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
     }
     
     /*------------------------------------------------------
-     Created on 19-Jan-2018
-     Purpose : The below method is the delegate method the declareation and the data passing in the current method will be form the AssembleTrayScanBarCodeViewController class that will be setting the screwID parameter.
-     ------------------------------------------------------*/
-    func getScrewID(implantScrewID : NSString) -> Void
-    {
-        self.screwID = implantScrewID
-    }
-    
-    /*------------------------------------------------------
      The below method is delegate method of class AssemblyTrayScanBarCodeVC and will be called only when the reponse for scaning the product for implant selection gets true api:-validatescrewforproduct in screen AssemblyTrayScanBarCodeVC
      ------------------------------------------------------*/
     
@@ -167,13 +154,6 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
                     (arrButtons.object(at: i) as! UIButton).setImage(UIImage(named:arrButtonImagePresent.object(at: i) as! String), for: UIControlState.normal)
 
                     (arrButtons.object(at: i) as! UIButton).accessibilityHint =  Constants.kPresent
-                    
-                    /*------------------------------------------------------
-                     Updated on 19-Jan-2018 12:23 PM
-                     
-                     The below accessibilityIdentifier is used to distinguish between the old screws and the newly added screws. as we need to add screwID parameter in newly added screws and keep the old ones the same with three paramters as tray group, hole number, status while calling the createassemblyclone api
-                     ------------------------------------------------------*/
-                    (arrButtons.object(at: i) as! UIButton).accessibilityIdentifier = Constants.kSelected
                 }
             }
         }
@@ -228,6 +208,7 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
             lblScrewPresentP.isHidden = true
             
             lblScrewRemovedP.isHidden = true
+            
         }
         else
         {
@@ -353,13 +334,25 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
         
         if(overrideHoles.count > 0)
         {
-            let msg = "Selected Implant : " + "\nTray Position \((overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.kstrholeNumber) as AnyObject)"
+            let msg = "Selected Implant : " + "\((overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.kstrholeNumber) as AnyObject)"
 
             CommanMethods.alertView(alertView: self.alertView, message: msg as NSString, viewController: self, type: 1)
+            
+//            let alertController = UIAlertController(title: Constants.kProjectName, message: msg, preferredStyle: .alert)
+//
+//            let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//            {(action : UIAlertAction!) -> Void in
+//                self.performSegue(withIdentifier: Constants.kgotoEditImplant2, sender: nil)
+//            });
+//
+//            alertController.addAction(btnOk)
+//
+//            self.present(alertController, animated: true, completion: nil)
         }
         else
         {
             CommanMethods.alertView(message: Constants.kAlert_Please_select_screw as NSString , viewController: self, type: 1)
+//            self.showOKAlert(title :Constants.kstrError ,message: Constants.kAlert_Please_select_screw)
         }
     }
     
@@ -396,8 +389,6 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
                 
                 dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityValue, forKey: Constants.kstrholeNumber)
                 
-                dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityIdentifier, forKey: Constants.kscrewID)
-                
                 dictPins.setValue("1", forKey: Constants.kstrtrayGroup)
                 
                 arrayPins.add(dictPins)
@@ -410,17 +401,6 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
                 
                 dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityValue, forKey: Constants.kstrholeNumber)
                 
-                if (arrButtons.object(at: i) as! UIButton).accessibilityIdentifier == nil
-                {
-                    dictPins.setValue("", forKey: Constants.kscrewID)
-                }
-                else
-                {
-                    dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityIdentifier, forKey: Constants.kscrewID)
-                }
-                
-                dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityIdentifier, forKey: Constants.kscrewID)
-
                 dictPins.setValue("1", forKey: Constants.kstrtrayGroup)
                 
                 arrayPins.add(dictPins)
@@ -432,8 +412,6 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
          APi call createassemblyclone
          ------------------------------------------------------*/
         
-        print(dicionaryForTray)
-        
         CommanAPIs().saveassembly(dicionaryForTray, Constants.kcreateassemblyclone, { (response,err) in
             
             CommanMethods.removeProgrssView(isActivity: true)
@@ -442,15 +420,26 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
             {
                 self.responseCloneTray = NSMutableDictionary.init(dictionary: response!)
                 
-                CommanMethods.alertView(alertView: self.alertView, message: Constants.kTray_Assembly_Has_Been_Edited as NSString, viewController: self, type: 1)
+//                let alertController = UIAlertController(title: Constants.kProjectName, message: Constants.kmsgTrayHasBennCloned, preferredStyle: .alert)
+                
+                CommanMethods.alertView(alertView: self.alertView, message: Constants.kmsgTrayHasBennCloned as NSString, viewController: self, type: 1)
+                
+//                let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//                {(action : UIAlertAction!) -> Void in
+//                    self.performSegue(withIdentifier: Constants.kGoToAssembleTrayDetailTray2 , sender: nil)
+//                });
+//
+//                alertController.addAction(btnOk)
+//
+//                self.present(alertController, animated: true, completion: nil)
             }
             else
             {
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message:Constants.kstrWrongResponse)
             }
         })
     }
-    
     func setButtonAttribute() -> Void
     {
         for i in 0..<arrButtons.count
@@ -493,16 +482,12 @@ class AssembleTrayEditImplantTray2ViewController: UIViewController,AssembleTrayS
                             (arrButtons.object(at: j) as! UIButton).setImage(UIImage(named:arrButtonImagePresent.object(at: j) as! String), for: UIControlState.normal)
                         
                             (arrButtons.object(at: j) as! UIButton).accessibilityHint = Constants.kPresent
-                            
-                            (arrButtons.object(at: j) as! UIButton).accessibilityIdentifier = (arrScrewData.object(at: i) as! NSDictionary).value(forKey: Constants.kscrewID)! as? String
                         }
                         else
                         {
                             (arrButtons.object(at: j) as! UIButton).setImage(UIImage(named:arrButtonImageRemoved.object(at: j) as! String), for: UIControlState.normal)
                             
                             (arrButtons.object(at: j) as! UIButton).accessibilityHint = Constants.kRemoved
-                            
-                            (arrButtons.object(at: j) as! UIButton).accessibilityIdentifier = (arrScrewData.object(at: i) as! NSDictionary).value(forKey: Constants.kscrewID)! as? String
                         }
                     }
                 }

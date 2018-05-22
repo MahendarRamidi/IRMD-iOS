@@ -204,6 +204,8 @@ class ScanBarcodePreSurgeryViewController: UIViewController {
     //unwindToGoToScanBarCodePreSurgeryWithSegue
     @IBAction func unwindToGoToScanBarCodePreSurgery(segue:UIStoryboardSegue)
     {
+        CommanMethods.addProgrssView(aStrMessage: Constants.kstrLoading, isActivity: true)
+
         if let sourceViewController = segue.source as? PresurgeryAcceptAndTakePictureViewController
         {
             dicForsaveTrays = sourceViewController.dicForsaveTrays
@@ -216,7 +218,7 @@ class ScanBarcodePreSurgeryViewController: UIViewController {
             
             self.caseId = sourceViewController.caseId
             
-            self.arrTrayBaseline = NSMutableArray.init() as! [[String : Any]]
+            self.arrTrayBaseline = nil
             
             self.getAssemblyDetails()
         }

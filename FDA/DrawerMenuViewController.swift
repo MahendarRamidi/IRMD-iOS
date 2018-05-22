@@ -82,7 +82,6 @@ class DrawerMenuViewController: UIViewController {
     }
     
     @IBAction func searchByTrayPressed(_ sender: UIButton) {
-        
         if let parent = self.parent as? KYDrawerController{
             if let navVC = parent.mainViewController as? UINavigationController{
                 navVC.popToRootViewController(animated: false)

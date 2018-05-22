@@ -110,10 +110,7 @@ class SelectImplantPreSurgeryTray2ViewController: UIViewController,CustomAlertDe
 
         self.setButtonAttribute()
     }
-    override func viewWillAppear(_ animated: Bool)
-    {
-        //self.navigationItem.hidesBackButton = true;
-    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -354,7 +351,7 @@ class SelectImplantPreSurgeryTray2ViewController: UIViewController,CustomAlertDe
             {
                 dictPins = NSMutableDictionary.init()
                 
-                dictPins.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
+                dictPins.setValue("Other", forKey: Constants.kSCREW_STATUS)
                 
                 dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityValue, forKey: Constants.kHOLE_NUMBER)
                 
@@ -380,17 +377,58 @@ class SelectImplantPreSurgeryTray2ViewController: UIViewController,CustomAlertDe
                 if !((((response![Constants.kstrmessage])!)as! NSString) as String == Constants.kSuccess)
                 {
                     CommanMethods.alertView(message: ((((response![Constants.kstrmessage])!)as! NSString) as String) as String as NSString , viewController: self, type: 1)
+//                    self.showOKAlert(title :Constants.kstrError ,message: (((response![Constants.kstrmessage])!)as! NSString) as String)
                 }
                 else
                 {
                     self.webserivceResponse = NSMutableDictionary.init(dictionary: response!)
                     
-                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kTray_Assembly_Has_Been_Edited as NSString, viewController: self, type: 1)
+                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kmsgTrayHasBennCloned as NSString, viewController: self, type: 1)
+                    
+//                    let alertController = UIAlertController(title: Constants.kProjectName, message: Constants.kmsgTrayHasBennCloned, preferredStyle: .alert)
+//                    
+//                    let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//                    {(action : UIAlertAction!) -> Void in
+//                        
+//                        let destVC = self.storyboard?.instantiateViewController(withIdentifier: Constants.kPresurgeryAcceptAndTakePictureViewController) as! PresurgeryAcceptAndTakePictureViewController
+//                        
+//                        destVC.trayNumber = self.trayNumber
+//                        
+//                        destVC.assemblyID = ((response![Constants.knew_Assigned_ID])!)as! NSString
+//                        
+//                        /*------------------------------------------------------
+//                         The unwind segue identifier will get change according to the strbaseClass variable that is being set by goToTray and ScanBarcodePreSurgeryViewController controller
+//                         ------------------------------------------------------*/
+//                        
+//                        if(self.strBaseClass == Constants.kScanBarcodePreSurgeryViewController)
+//                        {
+//                            destVC.strBaseClass = Constants.kScanBarcodePreSurgeryViewController
+//                        }
+//                        else
+//                        {
+//                            destVC.strBaseClass = Constants.kGoToTrayViewController
+//                        }
+//                        
+//                        destVC.dicForsaveTrays = self.dicForsaveTrays
+//                        
+//                        destVC.trayType = self.trayType
+//                        
+//                        destVC.arrTrayType = self.arrTrayType
+//                        
+//                        destVC.caseId = self.caseId
+//                        
+//                        self.navigationController?.pushViewController(destVC, animated: true)
+//                    });
+//                    
+//                    alertController.addAction(btnOk)
+//                    
+//                    self.present(alertController, animated: true, completion: nil)
                 }
             }
             else
             {
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
             }
         })
     }

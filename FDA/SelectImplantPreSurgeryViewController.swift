@@ -45,8 +45,7 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
     var strBaseClass = ""
     var  overrideHoles:NSMutableArray! = NSMutableArray()
     var dicForsaveTrays :[String: Any] = [:]
-    var  tempOverrideHoles:NSMutableArray! = NSMutableArray()
-
+    
     override func viewDidLoad()
     {
         /*------------------------------------------------------
@@ -66,8 +65,8 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
         /*------------------------------------------------------
          Below code will be differentiating the array group according to the tray group and all the editing will be done on the temp array and at the time of the calling api for creating the clone the data is being rendered in tha main array
          ------------------------------------------------------*/
-//        if((fullResult.count) > 0)
-//        {
+        if((fullResult.count) > 0)
+        {
             let predicate1 = NSPredicate(format: "SELF.TRAY_GROUP = 1");
             let predicate2 = NSPredicate(format: "SELF.TRAY_GROUP = 2");
             let predicate3 = NSPredicate(format: "SELF.TRAY_GROUP = 3");
@@ -114,7 +113,6 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
             /*------------------------------------------------------
              Group B
              ------------------------------------------------------*/
-            
             for i in 0..<arrGroupB.count
             {
                 dictTemp = NSMutableDictionary()
@@ -151,13 +149,7 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
             }
             
             arrGroupC = (arrayfinal.mutableCopy()) as! [[String:Any]]
-//        }
-//        else
-//        {
-//            arrGroupA = nil
-//            arrGroupB = nil
-//            arrGroupC = nil
-//        }
+        }
     }
     
     /*------------------------------------------------------
@@ -257,7 +249,7 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
     }
     override func viewWillAppear(_ animated: Bool)
     {
-        //self.navigationItem.hidesBackButton = true;        
+        //assembledTrayLabel.text = "Assembled Tray \(value!)"
     }
     
     /*------------------------------------------------------
@@ -302,89 +294,85 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
          ------------------------------------------------------*/
         for j in 0..<overrideHoles.count
         {
-            if ((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kSCREW_STATUS) as! NSString) != "Other"
+            /*------------------------------------------------------
+             Step 1
+             ------------------------------------------------------*/
+            let searchPredicate = NSPredicate(format: "SELF.HOLE_NUMBER ==[c] %@ AND SELF.TRAY_GROUP ==[c] %@", ((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kHOLE_NUMBER) as! CVarArg),((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kTRAY_GROUP) as! CVarArg))
+
+            /*------------------------------------------------------
+             Step 2
+             ------------------------------------------------------*/
+            tempArrGroup = arrGroupA.filter { searchPredicate.evaluate(with: $0) } as NSArray;
+            
+            /*------------------------------------------------------
+             Step 5
+             ------------------------------------------------------*/
+            if(tempArrGroup.count > 0)
             {
-                /*------------------------------------------------------
-                 Step 1
-                 ------------------------------------------------------*/
-                let searchPredicate = NSPredicate(format: "SELF.HOLE_NUMBER == %@ AND SELF.TRAY_GROUP == %@", ((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kHOLE_NUMBER) as! CVarArg),((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kTRAY_GROUP) as! CVarArg))
+                let index = tempArrGroupA.index(of: tempArrGroup.object(at: 0))
+                
+                tempArrGroupA.replaceObject(at: index, with: overrideHoles.object(at: j))
+            }
+            /*------------------------------------------------------
+             Step 3
+             ------------------------------------------------------*/
+            else
+            {
+                tempArrGroup = arrGroupB.filter { searchPredicate.evaluate(with: $0) } as NSArray;
                 
                 /*------------------------------------------------------
-                 Step 2
-                 ------------------------------------------------------*/
-                tempArrGroup = arrGroupA.filter { searchPredicate.evaluate(with: $0) } as NSArray;
-                
-                /*------------------------------------------------------
-                 Step 5
+                 Step 6
                  ------------------------------------------------------*/
                 if(tempArrGroup.count > 0)
                 {
-                    let index = tempArrGroupA.index(of: tempArrGroup.object(at: 0))
+                    let index = tempArrGroupB.index(of: tempArrGroup.object(at: 0))
                     
-                    tempArrGroupA.replaceObject(at: index, with: overrideHoles.object(at: j))
+                    tempArrGroupB.replaceObject(at: index, with: overrideHoles.object(at: j))
                 }
-                    /*------------------------------------------------------
-                     Step 3
-                     ------------------------------------------------------*/
+                /*------------------------------------------------------
+                 Step 4
+                 ------------------------------------------------------*/
                 else
                 {
-                    tempArrGroup = arrGroupB.filter { searchPredicate.evaluate(with: $0) } as NSArray;
+                    tempArrGroup = arrGroupC.filter { searchPredicate.evaluate(with: $0) } as NSArray;
                     
-                    /*------------------------------------------------------
-                     Step 6
-                     ------------------------------------------------------*/
                     if(tempArrGroup.count > 0)
                     {
-                        let index = tempArrGroupB.index(of: tempArrGroup.object(at: 0))
+                        let index = tempArrGroupC.index(of: tempArrGroup.object(at: 0))
                         
-                        tempArrGroupB.replaceObject(at: index, with: overrideHoles.object(at: j))
+                        tempArrGroupC.replaceObject(at: index, with: overrideHoles.object(at: j))
                     }
-                        /*------------------------------------------------------
-                         Step 4
-                         ------------------------------------------------------*/
+                    /*------------------------------------------------------
+                     Step 7
+                     ------------------------------------------------------*/
                     else
                     {
-                        tempArrGroup = arrGroupC.filter { searchPredicate.evaluate(with: $0) } as NSArray;
-                        
-                        if(tempArrGroup.count > 0)
-                        {
-                            let index = tempArrGroupC.index(of: tempArrGroup.object(at: 0))
-                            
-                            tempArrGroupC.replaceObject(at: index, with: overrideHoles.object(at: j))
-                        }
-                            /*------------------------------------------------------
-                             Step 7
-                             ------------------------------------------------------*/
-                        else
-                        {
-                            arrayInput.add(overrideHoles.object(at: j))
-                        }
+                        arrayInput.add(overrideHoles.object(at: j))
                     }
                 }
             }
         }
         
-        var tempDict = NSMutableDictionary.init()
-        var tempNewlyAddedArray = NSMutableArray.init()
-        
-        for j in 0..<overrideHoles.count
-        {
-            if(((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kSCREW_STATUS) as! NSString)) == "Other"
-            {
-                tempDict = NSMutableDictionary.init()
-                
-                tempDict.setValue("Present", forKey: Constants.kSCREW_STATUS)
-                tempDict.setValue((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kHOLE_NUMBER), forKey: Constants.kHOLE_NUMBER)
-                tempDict.setValue((overrideHoles.object(at: j)as! NSDictionary).value(forKey: Constants.kTRAY_GROUP), forKey: Constants.kTRAY_GROUP)
-                tempNewlyAddedArray.add(tempDict)
-            }
-        }
+//        var tempArrForCheckRedundantData = NSMutableArray.init()
+//
+//        for j in 0..<tempArrGroupA.count
+//        {
+//            if(tempArrGroupA.count > 0)
+//            {
+//                let searchPredicate = NSPredicate(format: "SELF.HOLE_NUMBER ==[c] %@ AND SELF.TRAY_GROUP ==[c] %@", ((tempArrGroupA.object(at: j)as! NSDictionary).value(forKey: Constants.kHOLE_NUMBER) as! CVarArg),((tempArrGroupA.object(at: j)as! NSDictionary).value(forKey: Constants.kTRAY_GROUP) as! CVarArg))
+//
+//                tempArrForCheckRedundantData = tempArrGroupA.filter { searchPredicate.evaluate(with: $0) } as! NSMutableArray;
+//
+//                if(tempArrForCheckRedundantData.count > 1)
+//                {
+//
+//                }
+//            }
+//        }
         
         /*------------------------------------------------------
         Add all the arrays in arrayInput to prepare final input array in api createpreassemblyclone parameter
          ------------------------------------------------------*/
-//        let searchPredicate = NSPredicate(format: "SELF.SCREW_STATUS ==[c] Present")
-        arrayInput.addObjects(from: tempNewlyAddedArray as! [Any])
         arrayInput.addObjects(from: tempArrGroupA as! [Any])
         arrayInput.addObjects(from: tempArrGroupB as! [Any])
         arrayInput.addObjects(from: tempArrGroupC as! [Any])
@@ -400,17 +388,56 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
                 if !((((response![Constants.kstrmessage])!)as! NSString) as String == Constants.kSuccess)
                 {
                     CommanMethods.alertView(message: ((((response![Constants.kstrmessage])!)as! NSString) as String) as String as NSString , viewController: self, type: 1)
+//                    self.showOKAlert(title :Constants.kstrError ,message: (((response![Constants.kstrmessage])!)as! NSString) as String)
                 }
                 else
                 {
                     self.webserivceResponse = NSMutableDictionary.init(dictionary: response!)
                     
-                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kTray_Assembly_Has_Been_Edited as NSString, viewController: self, type: 1)
+                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kmsgTrayHasBennCloned as NSString, viewController: self, type: 1)
+//                    let alertController = UIAlertController(title: Constants.kProjectName, message: Constants.kmsgTrayHasBennCloned, preferredStyle: .alert)
+//
+//                    let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//                    {(action : UIAlertAction!) -> Void in
+//
+//                        let destVC = self.storyboard?.instantiateViewController(withIdentifier: Constants.kPresurgeryAcceptAndTakePictureViewController) as! PresurgeryAcceptAndTakePictureViewController
+//
+//                        /*------------------------------------------------------
+//                         The unwind segue identifier will get change according to the strbaseClass variable that is being set by goToTray and ScanBarcodePreSurgeryViewController controller
+//                         ------------------------------------------------------*/
+//                        destVC.assemblyID = ((response![Constants.knew_Assigned_ID])!)as! NSString
+//
+//                        destVC.trayNumber = self.trayNumber
+//
+//                        if(self.strBaseClass == Constants.kScanBarcodePreSurgeryViewController)
+//                        {
+//                            destVC.strBaseClass = Constants.kScanBarcodePreSurgeryViewController
+//                        }
+//                        else
+//                        {
+//                            destVC.strBaseClass = Constants.kGoToTrayViewController
+//                        }
+//
+//                        destVC.dicForsaveTrays = self.dicForsaveTrays
+//
+//                        destVC.trayType = self.trayType
+//
+//                        destVC.arrTrayType = self.arrTrayType
+//
+//                        destVC.caseId = self.caseId
+//
+//                        self.navigationController?.pushViewController(destVC, animated: true)
+//                    });
+//
+//                    alertController.addAction(btnOk)
+//
+//                    self.present(alertController, animated: true, completion: nil)
                 }
             }
             else
             {
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message : Constants.kstrWrongResponse)
             }
         })
     }
@@ -563,97 +590,17 @@ class SelectImplantPreSurgeryViewController: UIViewController,UICollectionViewDa
         if(arr.count > 0)
         {
             let dic = arr[0] as [String:Any]
-            if((dic["SCREW_STATUS"] as! String) == "Present")
+            if((dic[Constants.kSCREW_STATUS] as! String) == Constants.kPresent)
             {
                 cell.btnPin.backgroundColor = UIColor.green
             }
-            else if((dic["SCREW_STATUS"] as! String) == "Other")
+            else if((dic[Constants.kSCREW_STATUS] as! String) == Constants.kother)
             {
                 cell.btnPin.backgroundColor = UIColor.yellow
             }
-            else if((dic["SCREW_STATUS"] as! String) == "Removed")
+            else if((dic[Constants.kSCREW_STATUS] as! String) == Constants.kRemoved)
             {
                 cell.btnPin.backgroundColor = UIColor.red
-            }
-            else
-            {
-                cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-            }
-            if(overrideHoles.count > 0)
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(dic["HOLE_NUMBER"]!)' AND SELF.TRAY_GROUP == '\(dic["TRAY_GROUP"]!)'");
-                
-                let arrOverride = overrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-                
-                if arrOverride.count > 0
-                {
-                    let dic = arrOverride[0] as [String:Any]
-                    if((dic["SCREW_STATUS"] as! String) == "Present")
-                    {
-                        cell.btnPin.backgroundColor = UIColor.green
-                    }
-                    else if((dic["SCREW_STATUS"] as! String) == "Other")
-                    {
-                        cell.btnPin.backgroundColor = UIColor.yellow
-                    }
-                    else if((dic["SCREW_STATUS"] as! String) == "Removed")
-                    {
-                        cell.btnPin.backgroundColor = UIColor.red
-                    }
-                    else
-                    {
-                        cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-                    }
-                }
-            }
-        }
-        else if(overrideHoles.count > 0)
-        {
-            var arrOverride : [[String:Any]] = [[String:Any]]()
-            
-            if collectionView == screwsCollectionVw
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(strSection)' AND SELF.TRAY_GROUP == '1'");
-                
-                arrOverride = overrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-                
-            }
-            else if collectionView == collectionViewGrpB
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(strSection)' AND SELF.TRAY_GROUP == '2'");
-                
-                arrOverride = overrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-            }
-            else
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(strSection)' AND SELF.TRAY_GROUP == '3'");
-                
-                arrOverride = overrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-            }
-            
-            if(arrOverride.count > 0)
-            {
-                let dic = arrOverride[0] as [String:Any]
-                if((dic["SCREW_STATUS"] as! String) == "Present")
-                {
-                    cell.btnPin.backgroundColor = UIColor.green
-                }
-                else if((dic["SCREW_STATUS"] as! String) == "Other")
-                {
-                    cell.btnPin.backgroundColor = UIColor.yellow
-                }
-                else if((dic["SCREW_STATUS"] as! String) == "Removed")
-                {
-                    cell.btnPin.backgroundColor = UIColor.red
-                }
-                else
-                {
-                    cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-                }
-            }
-            else
-            {
-                cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
             }
         }
         else
@@ -874,15 +821,15 @@ class collectionCell2:UICollectionViewCell {
                         
                         if(btnPin.backgroundColor == UIColor.green)
                         {
-                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor.red)
                         {
-                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0))
                         {
-                            dic.setValue("-", forKey: Constants.kSCREW_STATUS)
+                            dic.setValue("Other", forKey: Constants.kSCREW_STATUS)
                         }
                         else
                         {
@@ -914,7 +861,7 @@ class collectionCell2:UICollectionViewCell {
                             dic.setValue("Other", forKey: Constants.kSCREW_STATUS)
                         }
                         dic.setValue("\(btnPin.tag)", forKey: Constants.kTRAY_GROUP)
-                     
+
                         objSelectedImpantVwController.overrideHoles.add(dic as! [String : Any])
                     }
                 }
@@ -936,15 +883,15 @@ class collectionCell2:UICollectionViewCell {
                         
                         if(btnPin.backgroundColor == UIColor.green)
                         {
-                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor.red)
                         {
-                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0))
                         {
-                            dic.setValue("-", forKey: Constants.kSCREW_STATUS)
+                            dic.setValue("Other", forKey: Constants.kSCREW_STATUS)
                         }
                         else
                         {
@@ -975,7 +922,7 @@ class collectionCell2:UICollectionViewCell {
                             dic.setValue("Other", forKey: Constants.kSCREW_STATUS)
                         }
                         dic.setValue("\(btnPin.tag)", forKey: Constants.kTRAY_GROUP)
-                        
+
                         objSelectedImpantVwController.overrideHoles.add(dic)
                     }
                 }
@@ -1033,15 +980,15 @@ class collectionCell2:UICollectionViewCell {
                         dic.setValue("\(strSection)", forKey: Constants.kHOLE_NUMBER)
                         if(btnPin.backgroundColor == UIColor.green)
                         {
-                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor.red)
                         {
-                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0))
                         {
-                            dic.setValue("-", forKey: Constants.kSCREW_STATUS)
+                            dic.setValue("Other", forKey: Constants.kSCREW_STATUS)
                         }
                         else
                         {
@@ -1072,7 +1019,7 @@ class collectionCell2:UICollectionViewCell {
                             dic.setValue("Other", forKey: Constants.kSCREW_STATUS)
                         }
                         dic.setValue("\(btnPin.tag)", forKey: Constants.kTRAY_GROUP)
-                    
+
                         objSelectedImpantVwController.overrideHoles.add(dic)
                         
                     }
@@ -1094,15 +1041,15 @@ class collectionCell2:UICollectionViewCell {
                         dic.setValue("\(strSection)", forKey: Constants.kHOLE_NUMBER)
                         if(btnPin.backgroundColor == UIColor.green)
                         {
-                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor.red)
                         {
-                            dic.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
+                            dic.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
                         }
                         else if(btnPin.backgroundColor == UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0))
                         {
-                            dic.setValue("-", forKey: Constants.kSCREW_STATUS)
+                            dic.setValue("Other", forKey: Constants.kSCREW_STATUS)
                         }
                         else
                         {

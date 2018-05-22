@@ -17,7 +17,6 @@ class AddTrayController: UIViewController {
     var arrTrayType : NSMutableArray = NSMutableArray.init()
     var dicForsaveTrays:[String:Any] = [:]
     var caseId:Any! = nil
-    var isForAddTray : Bool = false
     @IBOutlet var imageView: UIImageView!
     
     override func viewDidLoad()
@@ -30,24 +29,6 @@ class AddTrayController: UIViewController {
          Updated on 11-Dec-2017 :- Below button title changed from "Tray assign to case" to "Assign tray to Case".
          ------------------------------------------------------*/
         btnAddTray.setTitle("Assign tray to case \((caseId as! [String:Any]) ["id"]!)", for: UIControlState.normal)
-        
-        var popToVC : ScanBarcodeHomeViewController?
-        var popToVC1 : ScanBarcodeViewController?
-        for vc in (self.navigationController?.viewControllers)!
-        {
-            if vc is ScanBarcodeHomeViewController
-            {
-                popToVC = vc as? ScanBarcodeHomeViewController
-                
-                popToVC?.isForAddTray = true
-            }
-            else if vc is ScanBarcodeViewController
-            {
-                popToVC1 = vc as? ScanBarcodeViewController
-                
-                popToVC1?.isForAddTray = true
-            }
-        }
     }        
     
     override func viewDidAppear(_ animated: Bool)
@@ -162,7 +143,6 @@ class AddTrayController: UIViewController {
             obj.caseId = caseId
             dicForsaveTrays[Constants.ktrayData] = arrtray
             obj.trayType = trayType
-            obj.isForAddTray = isForAddTray
             obj.arrTrayType = arrTrayType
             obj.tray = tray
             obj.dicForsaveTrays = dicForsaveTrays

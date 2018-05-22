@@ -14,7 +14,6 @@ import UIKit
 protocol AssembleTrayScanBarCodeViewControllerDelegate
 {
     func validateScrewForProductApiResponse(response : Bool)->Void
-    func getScrewID(implantScrewID : NSString) -> Void    
 }
 
 class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegate
@@ -28,8 +27,6 @@ class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegat
     var newResponse = NSMutableDictionary.init()
     
     var trayType : NSString = ""
-    
-    var screwID : NSString = ""
     
     var tray :Dictionary <String,Any>? = nil
     
@@ -78,13 +75,6 @@ class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegat
     {
         if(differentiateAlertView == 0)
         {
-            /*------------------------------------------------------
-             Updated on 19-Jan-2018 12:29 PM
-             
-             The below delegate method call will be setting the screwID parameter that is being fetched from the api response searchimplantybybarcode
-             ------------------------------------------------------*/
-            self.delegate?.getScrewID(implantScrewID: screwID)
-            
             self.delegate?.validateScrewForProductApiResponse(response: true)
             
             self.navigationController?.popViewController(animated: true)
@@ -96,8 +86,6 @@ class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegat
             let arrScrewStatus = (self.dictImagData.value(forKey: Constants.kassemblyDetails) as! NSMutableArray).value(forKey: Constants.kscrewStatus) as! NSArray
             
             let arrtrayGroup = (self.dictImagData.value(forKey: Constants.kassemblyDetails) as! NSMutableArray).value(forKey: Constants.kstrtrayGroup) as! NSArray
-            
-            let arrScrewID = ((((self.dictImagData.value(forKey:"assemblyDetails")) as! NSArray).value(forKey: "screwId")) as! NSArray).value(forKey: "id") as! NSArray
             
             let arrData = NSMutableArray()
             
@@ -112,8 +100,6 @@ class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegat
                 dictData.setValue(arrScrewStatus[i], forKey: Constants.kscrewStatus)
                 
                 dictData.setValue(arrtrayGroup[i], forKey: Constants.kstrtrayGroup)
-                
-                dictData.setValue(arrScrewID[i], forKey: Constants.kscrewID)
                 
                 arrData.add(dictData.mutableCopy())
             }
@@ -207,6 +193,8 @@ class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegat
                 if let msg:String = response?[Constants.kstrmessage] as? String
                 {
                     if(msg == Constants.kmsgNoRecord)
+                        
+                        
                     {
                         CommanMethods.alertView(message: msg as NSString , viewController: self, type: 1)
                     }
@@ -216,7 +204,7 @@ class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegat
                          On success the delegate method in AssembleTrayEditImplantViewController/ AssembleTrayEditImplantTray2ViewController classes will get called for setting the data in main array
                          ------------------------------------------------------*/
 
-                        self.screwID = (response?["screw_id"]! as? String)! as NSString
+                        //(response?["product_description"]! as? String)!
                         
                         self.differentiateAlertView = 0
                         
@@ -333,7 +321,7 @@ class AssembleTrayScanBarCodeViewController: UIViewController,CustomAlertDelegat
     
     @IBAction func unwindToVC1(segue:UIStoryboardSegue)
     {
-       print(Constants.kSuccess)
+            print(Constants.kSuccess)
     }
     
     /*------------------------------------------------------

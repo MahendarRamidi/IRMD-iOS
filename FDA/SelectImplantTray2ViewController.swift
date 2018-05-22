@@ -10,7 +10,6 @@ import UIKit
 
 class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
     @IBOutlet weak var lblAssmebleTray: UILabel!
-    @IBOutlet weak var imageVw: UIImageView!
     var alertView = CustomAlertViewController.init()
     var imageView:UIImage! = nil
     var arrScrewData : NSMutableArray = []
@@ -67,7 +66,6 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
     
     override func viewDidLoad()
     {
-        self.navigationItem.hidesBackButton = true;
         /*------------------------------------------------------
          Below code if for preparing alert view for presenting as alert box and setting the delegate as current class. that will be helpful in calling the action of okbutton when user taps on ok button in alert view
          ------------------------------------------------------*/
@@ -162,8 +160,6 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
             sender.setImage(UIImage(named:arrButtonImageRemoved.object(at: sender.tag-1) as! String), for: UIControlState.normal)
             
             sender.accessibilityHint = Constants.kRemoved
-            
-            self.setOverRideHoles(status: Constants.kRemoved as NSString, holeNumber: sender.accessibilityValue! as NSString)
         }
             
         /*------------------------------------------------------
@@ -175,8 +171,6 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
             sender.setImage(UIImage(named:arrButtonImagePlain.object(at: sender.tag-1) as! String), for: UIControlState.normal)
 
             sender.accessibilityHint = Constants.kDeselected
-            
-             self.setOverRideHoles(status: Constants.kDeselected as NSString, holeNumber: sender.accessibilityValue! as NSString)
         }
         
         /*------------------------------------------------------
@@ -188,8 +182,6 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
             sender.setImage(UIImage(named:arrButtonImagePresent.object(at: sender.tag-1) as! String), for: UIControlState.normal)
 
             sender.accessibilityHint = Constants.kPresent
-            
-            self.setOverRideHoles(status: Constants.kPresent as NSString, holeNumber: sender.accessibilityValue! as NSString)
         }
         
         /*------------------------------------------------------
@@ -200,87 +192,22 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
         {
             sender.accessibilityHint = Constants.kSelected
             
+            let dictTemp = NSMutableDictionary.init()
+            
+            dictTemp.setValue(sender.accessibilityValue, forKey: Constants.kHOLE_NUMBER)
+            
+            dictTemp.setValue("1", forKey: Constants.kTRAY_GROUP)
+            
+            overrideHoles = NSMutableArray.init()
+            
+            overrideHoles.add(dictTemp)
+            
             sender.setImage(UIImage(named:arrButtonImageSelected.object(at: sender.tag-1) as! String), for: UIControlState.normal)
                 
             isPinSelected = 1
-            
-            self.setOverRideHoles(status: Constants.kSelected as NSString, holeNumber: sender.accessibilityValue! as NSString)
         }
+        
     }
-    
-    func setOverRideHoles(status : NSString, holeNumber : NSString)
-    {
-        var ifAlreadyPresent = 0
-        
-        var selectedIndex = 0
-        
-        var tempDict = NSMutableDictionary.init()
-        
-        if(overrideHoles.count > 0)
-        {
-            for i in 0..<overrideHoles.count
-            {
-                if (overrideHoles.object(at: i) as! NSDictionary).value(forKey: Constants.kHOLE_NUMBER) as! NSString == holeNumber
-                {
-                    ifAlreadyPresent = 1
-                    selectedIndex = i
-                }
-                else
-                {
-                   
-                }
-            }
-            if(ifAlreadyPresent == 0)
-            {
-                tempDict = NSMutableDictionary.init()
-                tempDict.setValue(holeNumber, forKey: Constants.kHOLE_NUMBER)
-                if (status as String) as String == Constants.kSelected || status as String == Constants.kPresent
-                {
-                    tempDict.setValue(1, forKey: Constants.kSCREW_ID)
-                }
-                else if status as String == Constants.kRemoved || status as String == Constants.kDeselected
-                {
-                    tempDict.setValue(0, forKey: Constants.kSCREW_ID)
-                }
-                tempDict.setValue(1, forKey: Constants.kTRAY_GROUP)
-                overrideHoles.add(tempDict)
-            }
-            else
-            {
-                tempDict = NSMutableDictionary.init()
-                tempDict.setValue(holeNumber, forKey: Constants.kHOLE_NUMBER)
-                tempDict.setValue(1, forKey: Constants.kTRAY_GROUP)
-                if status as String == Constants.kPresent || (status as String) as String == Constants.kSelected
-                {
-                    overrideHoles.removeObject(at: selectedIndex)
-                }
-                else if status as String == Constants.kRemoved
-                {
-                    overrideHoles.removeObject(at: selectedIndex)
-                }
-                else if status as String == Constants.kDeselected
-                {
-                    overrideHoles.removeObject(at: selectedIndex)
-                }
-            }
-        }
-        else
-        {
-            tempDict = NSMutableDictionary.init()
-            tempDict.setValue(holeNumber, forKey: Constants.kHOLE_NUMBER)
-            if status as String == Constants.kPresent || (status as String) as String == Constants.kSelected
-            {
-                tempDict.setValue(1, forKey: Constants.kSCREW_ID)
-            }
-            else if status as String == Constants.kRemoved || status as String == Constants.kDeselected
-            {
-                tempDict.setValue(0, forKey: Constants.kSCREW_ID)
-            }
-            tempDict.setValue(1, forKey: Constants.kTRAY_GROUP)
-            overrideHoles.add(tempDict)
-        }
-    }
-    
     
     /*------------------------------------------------------
      Below method is the delegate method of alert view ok button action and will be called when user clicks on ok button ok alert view to perform necessary action
@@ -334,7 +261,7 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
         var dictPins = NSMutableDictionary.init()
         
         var strPins = NSString.init()
-                
+        
         differentiateAlertView = 0
         
         for i in 0..<arrButtons.count
@@ -343,54 +270,38 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
              The implants those are having the selected accessibility hint will be set as present and send back to edit implant
              ------------------------------------------------------*/
             
-//            if (arrButtons.object(at: i) as! UIButton).accessibilityHint == Constants.kSelected
-//            {
-//                dictPins = NSMutableDictionary.init()
-//
-//                dictPins.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
-//
-//                dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityValue, forKey: Constants.kHOLE_NUMBER)
-//
-//                dictPins.setValue("1", forKey: Constants.kTRAY_GROUP)
-//
-//                if strPins.length > 0
-//                {
-//                     strPins = (strPins as String) + ", \(String(describing: (dictPins.value(forKey: Constants.kHOLE_NUMBER))!))" as NSString
-//                }
-//                else
-//                {
-//                     strPins = (strPins as String) + "\(String(describing: (dictPins.value(forKey: Constants.kHOLE_NUMBER))!))" as NSString
-//                }
-//
-//                arrayPins.add(dictPins)
-//            }
-        }
-        
-        if(overrideHoles.count > 0)
-        {
-            for iCount in 0..<overrideHoles.count
+            if (arrButtons.object(at: i) as! UIButton).accessibilityHint == Constants.kSelected
             {
-                var sortedArray1 = (overrideHoles.value(forKey: "HOLE_NUMBER") as! NSArray).sorted {
-                    (s1, s2) -> Bool in return (s1 as AnyObject).localizedStandardCompare(s2 as! String) == .orderedAscending
-                    } as NSArray
+                dictPins = NSMutableDictionary.init()
                 
-                if strPins.length == 0
-                {
-                    strPins = "\(sortedArray1.object(at: iCount) as AnyObject)" as NSString
-                }
-                else
-                {
-                    strPins = (strPins as String) + "," + " \(sortedArray1.object(at: iCount) as AnyObject)" as NSString
-
-                }
+                dictPins.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
+                
+                dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityValue, forKey: Constants.kHOLE_NUMBER)
+                
+                dictPins.setValue("1", forKey: Constants.kTRAY_GROUP)
+                
+                strPins = (strPins as String) + "\(String(describing: (dictPins.value(forKey: Constants.kHOLE_NUMBER))!))" as NSString
+                
+                arrayPins.add(dictPins)
             }
         }
         
-        let attrString = NSAttributedString.init(string: "Selected Implants:\nTray Position(s) \(strPins as String)")
-                
-        CommanMethods.alertViewForPostSurgery(alertView: alertView, message: attrString, viewController: self, type: 1)
+        let msg = "Selected values : " + (strPins as String)
+        
+        CommanMethods.alertView(alertView: alertView, message: msg as NSString, viewController: self, type: 1)
+        
+//        let alertController = UIAlertController(title: Constants.kProjectName, message: msg, preferredStyle: .alert)
+//
+//        let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//        {(action : UIAlertAction!) -> Void in
+//             self.performSegue(withIdentifier: Constants.kbackToEditImplants, sender: nil)
+//        });
+        
+//        alertController.addAction(btnOk)
+//
+//        self.present(alertController, animated: true, completion: nil)
+      
     }
-    
     func callUpdateImageRecognitionApi()
     {
         var json :Any! = nil
@@ -491,7 +402,7 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
                 }
             }
             
-            if response != nil && response![Constants.kstatusFlag] as! Int == 0
+            if response != nil && response![Constants.kstatusFlag] as! Int != 1
             {
                 let preimage = self.dicForImageRecognitionResponse[Constants.kPreImage] as! String
                 self.dicForImageRecognitionResponse = response!
@@ -513,6 +424,7 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
             else
             {
                 CommanMethods.alertView(message: Constants.kAlert_Please_take_picture_again as NSString , viewController: self, type: 1)
+                //                self.showOKAlert(title :Constants.kstrError ,message: Constants.kAlert_Please_take_picture_again)
                 
                 DispatchQueue.main.async {
                     CommanMethods.removeProgrssView(isActivity: true)
@@ -538,6 +450,10 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
             
             CommanMethods.removeProgrssView(isActivity: true)
             
+            //                let actionsheet = UIAlertController.init(title: "", message: "", preferredStyle: UIAlertControllerStyle.alert)
+            
+            //                var okButton:UIAlertAction! = nil
+            
             /*------------------------------------------------------
              if response msg is failed then show alert for failed response
              ------------------------------------------------------*/
@@ -548,6 +464,7 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
                 {
                     CommanMethods.removeProgrssView(isActivity: true)
                     CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+                    //                        self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                     return
                 }
             }
@@ -560,20 +477,118 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
             {
                 self.differentiateAlertView = 1
                 
-                CommanMethods.alertView(alertView: self.alertView, message: Constants.kPostop_Tray_Configuration_Updated as NSString, viewController: self, type: 1)
+                CommanMethods.alertView(alertView: self.alertView, message: Constants.kAlert_Image_updated as NSString, viewController: self, type: 1)
+                
+                //                    actionsheet.message = Constants.kAlert_Image_updated
+                //                    okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                //                        self.isDetectedImageIsAdded = true
+                //                        self.isEditImplantsVisible = true
+                //
+                //                        if(self.strBaseClass == "ScanBarCode")
+                //                        {
+                //                            self.performSegue(withIdentifier: "backToAcceptAndFinishWhileSearchTray", sender: nil)
+                //                        }
+                //                        else
+                //                        {
+                //                            self.performSegue(withIdentifier: "unwindToAcceptTrayStep2WithSegue", sender: nil)
+                //                        }
+                //                    })
             }
             else
             {
-                CommanMethods.alertView(alertView: self.alertView, message: "Please Try Again" as NSString, viewController: self, type: 1)
+                CommanMethods.alertView(alertView: self.alertView, message: "Wrong Response" as NSString, viewController: self, type: 1)
+                
+                //                    actionsheet.message = "Wrong Response"
+                //                    okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                //                        self.isDetectedImageIsAdded = false
+                //                        self.isEditImplantsVisible = false
+                //
+                //                        if(self.isFromSerachTray == true)
+                //                        {
+                //                            self.performSegue(withIdentifier: Constants.kbackToAcceptAndFinish, sender: nil)
+                //                        }
+                //                        else
+                //                        {
+                //                            self.performSegue(withIdentifier: "unwindToAcceptTrayStep2WithSegue", sender: nil)
+                //                        }
+                //                    })
             }
+            
+            //                actionsheet.addAction(okButton)
+            //
+            //                DispatchQueue.main.async {
+            //                    self.present(actionsheet, animated: true, completion: nil)
+            //                }
         })
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
+        let arrayPins = NSMutableArray.init()
+        
+        var dictPins = NSMutableDictionary.init()
+        
+        var strPins = NSString.init()
+        
+        for i in 0..<arrButtons.count
+        {
+            dictPins.setValue((arrButtons.object(at: i) as! UIButton).accessibilityValue, forKey: Constants.kHOLE_NUMBER)
+            
+            dictPins.setValue("1", forKey: Constants.kTRAY_GROUP)
+            
+            if (arrButtons.object(at: i) as! UIButton).accessibilityHint == Constants.kSelected
+            {
+                dictPins = NSMutableDictionary.init()
+                
+                dictPins.setValue("Other", forKey: Constants.kSCREW_STATUS)
+                
+                dictPins.setValue("1", forKey: Constants.kSCREW_ID)
+                
+                strPins = (strPins as String) + ", " + ((arrButtons.object(at: i) as! UIButton).accessibilityValue)! as NSString
+                
+                arrayPins.add(dictPins)
+            }
+            else if (arrButtons.object(at: i) as! UIButton).accessibilityHint == Constants.kPresent
+            {
+                dictPins = NSMutableDictionary.init()
+                
+                dictPins.setValue(Constants.kRemoved, forKey: Constants.kSCREW_STATUS)
+                
+                dictPins.setValue("1", forKey: Constants.kSCREW_ID)
+                
+                strPins = (strPins as String) + ", " + ((arrButtons.object(at: i) as! UIButton).accessibilityValue)! as NSString
+                
+                arrayPins.add(dictPins)
+            }
+            else if (arrButtons.object(at: i) as! UIButton).accessibilityHint == Constants.kDeselected
+            {
+                dictPins = NSMutableDictionary.init()
+                
+                dictPins.setValue("Other", forKey: Constants.kSCREW_STATUS)
+                
+                dictPins.setValue("0", forKey: Constants.kSCREW_ID)
+                
+                strPins = (strPins as String) + ", " + ((arrButtons.object(at: i) as! UIButton).accessibilityValue)! as NSString
+                
+                arrayPins.add(dictPins)
+            }
+            else if (arrButtons.object(at: i) as! UIButton).accessibilityHint == Constants.kRemoved
+            {
+                dictPins = NSMutableDictionary.init()
+                
+                dictPins.setValue(Constants.kPresent, forKey: Constants.kSCREW_STATUS)
+                
+                dictPins.setValue("0", forKey: Constants.kSCREW_ID)
+                
+                strPins = (strPins as String) + ", " + ((arrButtons.object(at: i) as! UIButton).accessibilityValue)! as NSString
+                
+                arrayPins.add(dictPins)
+            }
+        }
         if(segue.identifier == "unwindToAcceptTrayStep2WithSegue")
         {
             let obj = segue.destination as! AcceptTrayStep2ViewController
+            obj.arrSelectedScrews = arrayPins
             
             if(overrideHoles.count > 0)
             {
@@ -624,76 +639,20 @@ class SelectImplantTray2ViewController: UIViewController ,CustomAlertDelegate{
                     
                     if (arrScrewData.object(at: i) as! NSDictionary).value(forKey: Constants.kHOLE_NUMBER)as! NSString == (arrButtons.object(at: j) as! UIButton).accessibilityValue! as NSString
                     {
-                        if (((arrScrewData.object(at: i) as! NSDictionary).value(forKey: Constants.kSCREW_STATUS)as! NSString) as String).lowercased() == "present"
+                        if ((arrScrewData.object(at: i) as! NSDictionary).value(forKey: Constants.kSCREW_STATUS)as! NSString) as String == Constants.kPresent
                         {
                             (arrButtons.object(at: j) as! UIButton).setImage(UIImage(named:arrButtonImagePresent.object(at: j) as! String), for: UIControlState.normal)
                             
                             (arrButtons.object(at: j) as! UIButton).accessibilityHint = Constants.kPresent
                         }
-                        else if (((arrScrewData.object(at: i) as! NSDictionary).value(forKey: Constants.kSCREW_STATUS)as! NSString) as String).lowercased() == Constants.kother
-                        {
-                            (arrButtons.object(at: j) as! UIButton).setImage(UIImage(named:arrButtonImageSelected.object(at: j) as! String), for: UIControlState.normal)
-
-                            (arrButtons.object(at: j) as! UIButton).accessibilityHint = Constants.kSelected
-                        }
-                        else if (((arrScrewData.object(at: i) as! NSDictionary).value(forKey: Constants.kSCREW_STATUS)as! NSString) as String).lowercased() == "removed"
-                        {
-                            (arrButtons.object(at: j) as! UIButton).setImage(UIImage(named:arrButtonImageRemoved.object(at: j) as! String), for: UIControlState.normal)
-                            
-                            (arrButtons.object(at: j) as! UIButton).accessibilityHint = Constants.kRemoved
-                        }
                         else
                         {
-                            (arrButtons.object(at: j) as! UIButton).setImage(UIImage(named:arrButtonImagePlain.object(at: j) as! String), for: UIControlState.normal)
-                            
-                            (arrButtons.object(at: j) as! UIButton).accessibilityHint = Constants.kDeselected
+                            (arrButtons.object(at: j) as! UIButton).setImage(UIImage(named:arrButtonImageRemoved.object(at: j) as! String), for: UIControlState.normal)
+
+                            (arrButtons.object(at: j) as! UIButton).accessibilityHint = Constants.kRemoved
                         }
                     }
                 }
-            }
-            self.getAssemblyImage()
-        }
-    
-    }
-    
-    /*------------------------------------------------------
-     The below method is written for showing image in different controller for making it viewable to user by pushing it in different controller where user can zoom it and see the image clearly . the method is being called by the tap gesture on the image
-     ------------------------------------------------------*/
-    
-    @IBAction func tapAction(_ sender: Any)
-    {
-        CommanMethods.showImage(imageView: imageVw, viewController: self)
-    }
-    
-    func getAssemblyImage() -> Void
-    {
-        CommanMethods.addProgrssView(aStrMessage: Constants.kstrLoading, isActivity: true)
-        
-        CommanAPIs().getAssemblyImage([Constants.kstrtrayID:value], Constants.getassemblyimagebyassemblyid) { (response,err) in
-            
-            CommanMethods.removeProgrssView(isActivity: true)
-            
-            if let msg:String = response?[Constants.kstrmessage] as? String
-            {
-                if(msg == Constants.kstrFailed)
-                {
-                    return
-                }
-            }
-            if response != nil
-            {
-                let dataDecoded : Data = Data(base64Encoded: response!["data"] as! String, options: .ignoreUnknownCharacters)!
-                
-                self.imageVw.image = UIImage(data: dataDecoded)
-                
-                /*------------------------------------------------------
-                 call the assembly details api by calling below method
-                 ------------------------------------------------------*/
-                
-            }
-            else
-            {
-                print("no assembly image")
             }
         }
     }

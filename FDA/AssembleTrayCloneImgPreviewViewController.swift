@@ -75,16 +75,27 @@ class AssembleTrayCloneImgPreviewViewController: UIViewController,CustomAlertDel
                 {
                     if (msg == Constants.kSuccess)
                     {
-                         CommanMethods.alertView(alertView: self.alertView, message: Constants.kPicture_has_been_uploaded as NSString, viewController: self, type: 1)
+                         CommanMethods.alertView(alertView: self.alertView, message: Constants.kSuccess as NSString, viewController: self, type: 1)
+                        
+//                        let alertController = UIAlertController(title: Constants.kProjectName, message: Constants.kSuccess, preferredStyle: .alert)
+//
+//                        let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//                        {(action : UIAlertAction!) -> Void in
+//                            self.performSegue(withIdentifier: Constants.kGoToScanImplant, sender: nil)
+//                        });
+//                        alertController.addAction(btnOk)
+//                        self.present(alertController, animated: true, completion: nil)
                     }
                     else
                     {
                         CommanMethods.alertView(message: Constants.kAlert_Please_take_picture_again as NSString , viewController: self, type: 1)
+//                        self.showOKAlert(title :Constants.kstrError ,message: Constants.kAlert_Please_take_picture_again)
                     }
                 }
                 else
                 {
                     CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+//                    self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                 }
             })
         }

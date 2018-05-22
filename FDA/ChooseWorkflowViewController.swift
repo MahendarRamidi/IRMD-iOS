@@ -81,11 +81,6 @@ class ChooseWorkflowViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
     }
     
-    @IBAction func openMenu(_ sender: Any)
-    {
-        CommanMethods.openSideMenu(navigationController: navigationController!)
-    }
-
     /*------------------------------------------------------
      The below method will get called from drawerController when user clicks on search by surgery menu. and will set the caller class that will differentiate between scan by bar code menu and surgery search menu in side bar. The variable will be send to landing controller there it will get differentiate and will navigate to corresponding view
      ------------------------------------------------------*/

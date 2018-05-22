@@ -207,6 +207,7 @@ class GoToTrayViewController: UIViewController,UIImagePickerControllerDelegate,U
     
     @IBAction func unwindToGoToTray(segue:UIStoryboardSegue)
     {
+        CommanMethods.addProgrssView(aStrMessage: Constants.kstrLoading, isActivity: true)
         if let sourceViewController = segue.source as? PresurgeryAcceptAndTakePictureViewController
         {
             dicForsaveTrays = sourceViewController.dicForsaveTrays
@@ -215,8 +216,8 @@ class GoToTrayViewController: UIViewController,UIImagePickerControllerDelegate,U
             self.arrTrayType = sourceViewController.arrTrayType
             self.imageView.image = sourceViewController.imageView.image
             self.caseId = sourceViewController.caseId
-            self.arrTrayBaseline = NSMutableArray.init() as! [[String : Any]]
-            //self.getAssemblyDetails()
+            self.arrTrayBaseline = nil
+            self.getAssemblyDetails()
         }
         print(Constants.kSuccess)
     }
@@ -327,7 +328,7 @@ class GoToTrayViewController: UIViewController,UIImagePickerControllerDelegate,U
             
             let selectedImplant = self.storyboard?.instantiateViewController(withIdentifier: Constants.kSelectImplantPreSurgeryTray2ViewController) as! SelectImplantPreSurgeryTray2ViewController
             
-            selectedImplant.arrScrewData = NSMutableArray.init(array: self.arrTrayBaseline!)
+            selectedImplant.arrScrewData = NSMutableArray.init(array: self.arrTrayBaseline)
             
             selectedImplant.strBaseClass = Constants.kGoToTrayViewController
             

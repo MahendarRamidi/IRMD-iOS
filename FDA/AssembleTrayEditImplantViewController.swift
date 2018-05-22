@@ -21,7 +21,6 @@ class AssembleTrayEditImplantViewController: UIViewController
     @IBOutlet weak var lblScrewPresentL: UILabel!
     @IBOutlet weak var lblScrewRemovedP: UILabel!
     @IBOutlet weak var lblScrewPresentP: UILabel!
-    var screwID : NSString = ""
     var identifyVC : NSString = ""
     var tray :Dictionary <String,Any>! = nil
     @IBOutlet weak var btnScanImplant: UIButton!
@@ -147,36 +146,30 @@ class AssembleTrayEditImplantViewController: UIViewController
         
         let fullResult = arrScrewData
         
-        /*------------------------------------------------------
-         Below code will be differentiating the array group according to the tray group and all the editing will be done on the temp array and at the time of the calling api for creating the clone the data is being rendered in tha main array
-         ------------------------------------------------------*/
-        
-        let predicate1 = Constants.kpredicateForGroup1
-        let predicate2 = Constants.kpredicateForGroup2
-        let predicate3 = Constants.kpredicateForGroup3
-        
-        arrGroupA = (fullResult as NSArray).filtered(using: predicate1) as! [[String : Any]]
-        arrGroupB = (fullResult as NSArray).filtered(using: predicate2) as! [[String : Any]]
-        arrGroupC = (fullResult as NSArray).filtered(using: predicate3) as! [[String : Any]]
-        
-        if(arrGroupA.count > 0)
+        if((fullResult.count) > 0)
         {
-            arrGroupA = arrGroupA.filter { ("\(String(describing: $0[Constants.kscrewStatus]!))" as NSString) == "Present"}
-            arrGroupATemp = NSMutableArray.init(array: arrGroupA)
+            /*------------------------------------------------------
+             Below code will be differentiating the array group according to the tray group and all the editing will be done on the temp array and at the time of the calling api for creating the clone the data is being rendered in tha main array
+             ------------------------------------------------------*/
+            
+            let predicate1 = Constants.kpredicateForGroup1
+            let predicate2 = Constants.kpredicateForGroup2
+            let predicate3 = Constants.kpredicateForGroup3
+            
+            arrGroupA = (fullResult as NSArray).filtered(using: predicate1) as! [[String : Any]]
+            arrGroupB = (fullResult as NSArray).filtered(using: predicate2) as! [[String : Any]]
+            arrGroupC = (fullResult as NSArray).filtered(using: predicate3) as! [[String : Any]]
         }
         
-        if(arrGroupB.count > 0)
-        {
-            arrGroupB = arrGroupB.filter { ("\(String(describing: $0[Constants.kscrewStatus]!))" as NSString) == "Present"}
-            arrGroupBTemp = NSMutableArray.init(array: arrGroupB)
-        }
+        arrGroupA = arrGroupA.filter { ("\(String(describing: $0[Constants.kscrewStatus]!))" as NSString) == "Present"}
+        arrGroupATemp = NSMutableArray.init(array: arrGroupA)
         
-        if(arrGroupC.count > 0)
-        {
-            arrGroupC = arrGroupC.filter { ("\(String(describing: $0[Constants.kscrewStatus]!))" as NSString) == "Present"}
-            arrGroupCTemp = NSMutableArray.init(array: arrGroupC)
-        }
-       
+        arrGroupB = arrGroupB.filter { ("\(String(describing: $0[Constants.kscrewStatus]!))" as NSString) == "Present"}
+        arrGroupBTemp = NSMutableArray.init(array: arrGroupB)
+        
+        arrGroupC = arrGroupC.filter { ("\(String(describing: $0[Constants.kscrewStatus]!))" as NSString) == "Present"}
+        arrGroupCTemp = NSMutableArray.init(array: arrGroupC)
+        
         if identifyVC as String == Constants.kstrScanBarCode
         {
             lblSelectLocation.text = Constants.kstrUpdatedImage
@@ -613,7 +606,7 @@ class AssembleTrayEditImplantViewController: UIViewController
     {
         if(overrideHoles.count > 0)
         {
-            let msg = "Selected Implant : " + "\nTray Position \((overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.kstrholeNumber) as AnyObject)" + " from Group " + "\((overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.kstrtrayGroup)  as AnyObject)"
+            let msg = "Selected Implant : " + "\((overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.kstrholeNumber) as AnyObject)" + " from group " + "\((overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.kstrtrayGroup)  as AnyObject)"
          
             differentiateAlertViewAction = 0
             
@@ -622,6 +615,7 @@ class AssembleTrayEditImplantViewController: UIViewController
         else
         {
             CommanMethods.alertView(message: Constants.kAlert_Please_select_screw as NSString , viewController: self, type: 1)
+//            self.showOKAlert(title :Constants.kstrError ,message: Constants.kAlert_Please_select_screw)
         }
     }
     
@@ -735,8 +729,6 @@ class AssembleTrayEditImplantViewController: UIViewController
          Below api call will be sending the screw details to server for creating a clone of current tray using the screw details after alteration
          ------------------------------------------------------*/
         
-        print(dicionaryForTray)
-        
         CommanAPIs().saveassembly(dicionaryForTray, Constants.kcreateassemblyclone, { (response,err) in
             
             CommanMethods.removeProgrssView(isActivity: true)
@@ -747,11 +739,23 @@ class AssembleTrayEditImplantViewController: UIViewController
                 
                 self.differentiateAlertViewAction = 1;
                 
-                CommanMethods.alertView(alertView: self.alertView, message: Constants.kTray_Assembly_Has_Been_Edited as NSString, viewController: self, type: 1)
+                CommanMethods.alertView(alertView: self.alertView, message: Constants.kmsgTrayHasBennCloned as NSString, viewController: self, type: 1)
+                
+//                let alertController = UIAlertController(title: Constants.kProjectName, message: Constants.kmsgTrayHasBennCloned, preferredStyle: .alert)
+//
+//                let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//                {(action : UIAlertAction!) -> Void in
+//                    self.performSegue(withIdentifier: Constants.kGoToAssembleTrayDetail, sender: nil)
+//                });
+//
+//                alertController.addAction(btnOk)
+//
+//                self.present(alertController, animated: true, completion: nil)
             }
             else
             {
                 CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+//                self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
             }
         })
     }
@@ -772,13 +776,6 @@ class AssembleTrayEditImplantViewController: UIViewController
             dic.setValue("\(String(describing: (overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.ktrayGroup)!))", forKey: Constants.ktrayGroup)
             dic.setValue(Constants.kPresent, forKey: Constants.kscrewStatus)
             dic.setValue((overrideHoles.object(at: 0) as! NSDictionary).value(forKey: Constants.kstrholeNumber), forKey: Constants.kstrholeNumber)
-            
-            /*------------------------------------------------------
-             Updated on 19-Jan-2018 12:23 PM
-             
-             The below code is used to distinguish between the old screws and the newly added screws. as we need to add screwID parameter in newly added screws and keep the old ones the same with three paramters as tray group, hole number, status while calling the createassemblyclone api
-             ------------------------------------------------------*/
-            dic.setValue(screwID, forKey: Constants.kscrewID)
             
             if(arrGroupATemp.count > arrGroupA.count)
             {
@@ -819,15 +816,6 @@ class AssembleTrayEditImplantViewController: UIViewController
         screwsCollectionVw.reloadData()
         collectionViewGrpB.reloadData()
         collectionViewGrpC.reloadData()
-    }
-    
-    /*------------------------------------------------------
-     Created on 19-Jan-2018
-     Purpose : The below method is the delegate method the declareation and the data passing in the current method will be form the AssembleTrayScanBarCodeViewController class that will be setting the screwID parameter.
-     ------------------------------------------------------*/
-    func getScrewID(implantScrewID : NSString) -> Void
-    {
-        self.screwID = implantScrewID
     }
     
     /*------------------------------------------------------

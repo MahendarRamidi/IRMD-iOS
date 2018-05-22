@@ -8,15 +8,10 @@
 
 import UIKit
 
-class AssembleTrayScannedImgByBarcodeViewController: UIViewController,CustomAlertDelegate
+class AssembleTrayScannedImgByBarcodeViewController: UIViewController
 {
-    func okBtnAction() {
-        
-    }
-    
     var tray :Dictionary <String,Any>! = nil
     
-    var alertView = CustomAlertViewController.init()
     var trayType : NSString = ""
     
     @IBOutlet var imageView: UIImageView!
@@ -26,13 +21,6 @@ class AssembleTrayScannedImgByBarcodeViewController: UIViewController,CustomAler
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        /*------------------------------------------------------
-         Below code if for preparing alert view for presenting as alert box and setting the delegate as current class. that will be helpful in calling the action of okbutton when user taps on ok button in alert view
-         ------------------------------------------------------*/
-        alertView = self.storyboard?.instantiateViewController(withIdentifier: Constants.kCustomAlertViewController) as! CustomAlertViewController
-        
-        alertView.delegate = self
-        /*------------------------------------------------------*/
     }
 
     override func didReceiveMemoryWarning()
@@ -90,13 +78,13 @@ class AssembleTrayScannedImgByBarcodeViewController: UIViewController,CustomAler
             obj.trayType = trayType
             obj.arrScrewData = arrScrewData
         }
-        else if trayType as String == Constants.ktray_2 || trayType as String == Constants.kTray_2
+        else
         {
             let obj  =  segue.destination as! AssembleTrayEditImplantTray2ViewController
             obj.tray = tray
             obj.trayType = trayType
             obj.arrScrewData = arrScrewData
-        } 
+        }
     }
 
     @IBAction func btnAccept(_ sender: Any)
@@ -106,19 +94,15 @@ class AssembleTrayScannedImgByBarcodeViewController: UIViewController,CustomAler
 
     @IBAction func btnAddImplant(_ sender: Any)
     {
-        if trayType as String == Constants.ktray_2 || trayType as String == Constants.kTray_2
+        if trayType as String == Constants.ktray_2
         {
             self.performSegue(withIdentifier: Constants.kstrgotoEditImplantTray2, sender: nil)        
         }
-        else if trayType as String == Constants.ktray_1 || trayType as String == Constants.kTray_1
+        else
         {
             CommanMethods.addProgrssView(aStrMessage: Constants.kstrLoading, isActivity: true)
             
             self.performSegue(withIdentifier: Constants.kstrgotoEditImplant, sender: nil)
-        }
-        else
-        {
-            CommanMethods.alertView(message: "Something went wrong" , viewController: self, type: 1)
         }
     }
     @IBAction func openMenu(_ sender: Any)

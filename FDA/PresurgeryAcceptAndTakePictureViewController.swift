@@ -37,10 +37,7 @@ class PresurgeryAcceptAndTakePictureViewController: UIViewController, UIImagePic
         alertView.delegate = self
         /*------------------------------------------------------*/
     }
-    override func viewWillAppear(_ animated: Bool)
-    {
-        self.navigationItem.hidesBackButton = true;
-    }
+
     override func didReceiveMemoryWarning()
     {
         super.didReceiveMemoryWarning()
@@ -201,8 +198,13 @@ class PresurgeryAcceptAndTakePictureViewController: UIViewController, UIImagePic
                 {
                     if (msg == Constants.kSuccess)
                     {
-                        CommanMethods.alertView(alertView: self.alertView, message: Constants.kPre_Surgery_Image_Updated as NSString, viewController: self, type: 1)
+                        CommanMethods.alertView(alertView: self.alertView, message: Constants.kSuccess as NSString, viewController: self, type: 1)
                         
+//                        let alertController = UIAlertController(title: Constants.kProjectName, message: Constants.kSuccess, preferredStyle: .alert)
+//
+//                        let btnOk = UIAlertAction(title: Constants.kOk, style: .default, handler:
+//                        {(action : UIAlertAction!) -> Void in
+//
 //                            /*------------------------------------------------------
 //                             the current value of assembly id is being cloned and a new id is being assigned to cloned tray so the further calculation and flow will be driven by new assembly id that is being generated from class SelectImplantPreSurgeryViewController and SelectImplantPreSurgeryTray2ViewController api createpreassemblyclone response
 //                             ------------------------------------------------------*/
@@ -235,11 +237,13 @@ class PresurgeryAcceptAndTakePictureViewController: UIViewController, UIImagePic
                     else
                     {
                         CommanMethods.alertView(message: Constants.kAlert_Please_take_picture_again as NSString , viewController: self, type: 1)
+//                        self.showOKAlert(title :Constants.kstrError ,message: Constants.kAlert_Please_take_picture_again)
                     }
                 }
                 else
                 {
                     CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+//                    self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                 }
             })
         }

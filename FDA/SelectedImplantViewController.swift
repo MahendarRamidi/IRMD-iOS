@@ -10,7 +10,6 @@ import UIKit
 
 class SelectedImplantViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout, CustomAlertDelegate
 {
-    @IBOutlet weak var imageVw: UIImageView!
     var alertView = CustomAlertViewController.init()
     var differentiateAlertView = 0
     var arrTrayType : NSMutableArray = NSMutableArray.init()
@@ -56,7 +55,6 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
     var  arrGroupB:[[String:Any]] = [[:]]
     var  arrGroupC:[[String:Any]] = [[:]]
     var  overrideHoles:NSMutableArray! = NSMutableArray()
-    var  tempOverrideHoles:NSMutableArray! = NSMutableArray()
     
     override func viewDidLoad() {
         
@@ -87,49 +85,6 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
         alertView = self.storyboard?.instantiateViewController(withIdentifier: Constants.kCustomAlertViewController) as! CustomAlertViewController
         
         alertView.delegate = self
-        
-        self.getAssemblyImage()
-    }
-    
-    func getAssemblyImage() -> Void
-    {
-        CommanMethods.addProgrssView(aStrMessage: Constants.kstrLoading, isActivity: true)
-        
-        CommanAPIs().getAssemblyImage([Constants.kstrtrayID:value], Constants.getassemblyimagebyassemblyid) { (response,err) in
-            
-            CommanMethods.removeProgrssView(isActivity: true)
-            
-            if let msg:String = response?[Constants.kstrmessage] as? String
-            {
-                if(msg == Constants.kstrFailed)
-                {
-                    return
-                }
-            }
-            else if response != nil
-            {
-                let dataDecoded : Data = Data(base64Encoded: response!["data"] as! String, options: .ignoreUnknownCharacters)!
-                
-                self.imageVw.image = UIImage(data: dataDecoded)
-                
-                /*------------------------------------------------------
-                 call the assembly details api by calling below method
-                 ------------------------------------------------------*/
-            }
-            else
-            {
-                print("no assembly image")
-            }
-        }
-    }
-    
-    /*------------------------------------------------------
-     The below method is written for showing image in different controller for making it viewable to user by pushing it in different controller where user can zoom it and see the image clearly . the method is being called by the tap gesture on the image
-     ------------------------------------------------------*/
-    
-    @IBAction func tapAction(_ sender: Any)
-    {
-        CommanMethods.showImage(imageView: imageVw, viewController: self)
     }
     
     /*------------------------------------------------------
@@ -231,7 +186,6 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
     
     override func viewWillAppear(_ animated: Bool)
     {
-        self.navigationItem.hidesBackButton = true;
         assembledTrayLabel.text = "Assembled Tray \(value!)"
     }
     
@@ -240,170 +194,23 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
      ------------------------------------------------------*/
     @IBAction func actionAccept(_ sender: Any)
     {
-        var strSElectedScrewsFromTray1 = ""
-        var strSElectedScrewsFromTray2 = ""
-        var strSElectedScrewsFromTray3 = ""
-        var strEmptyString = ""
+        var strFinal = ""
         
-        if overrideHoles.count > 0
-        {
-            let predicate1 = NSPredicate(format: "SELF.TRAY_GROUP = 1");
-            
-            let arr1 = ((overrideHoles as AnyObject).filtered(using: predicate1) as NSArray).mutableCopy() as! NSArray
-            
-            var sortedArray1 = (arr1.value(forKey: "HOLE_NUMBER") as! NSArray).sorted {
-                (s1, s2) -> Bool in return (s1 as AnyObject).localizedStandardCompare(s2 as! String) == .orderedAscending
-                } as NSArray
-            
-            for iCount in 0..<sortedArray1.count
-            {
-                if(strSElectedScrewsFromTray1.count == 0)
-                {
-                    strSElectedScrewsFromTray1 = "\((sortedArray1.object(at: iCount))as AnyObject)"
-                }
-                else
-                {
-                    strSElectedScrewsFromTray1 = strSElectedScrewsFromTray1 + ", " + "\((sortedArray1.object(at: iCount)) as AnyObject)"
-                }
-            }
-            let predicate2 = NSPredicate(format: "SELF.TRAY_GROUP = 2");
-            
-            let arr2 = ((overrideHoles as AnyObject).filtered(using: predicate2) as NSArray).mutableCopy() as! NSArray
-            
-            var sortedArray2 = (arr2.value(forKey: "HOLE_NUMBER") as! NSArray).sorted {
-                (s1, s2) -> Bool in return (s1 as AnyObject).localizedStandardCompare(s2 as! String) == .orderedAscending
-                } as NSArray
-            
-            for iCount in 0..<sortedArray2.count
-            {
-                if(strSElectedScrewsFromTray2.count == 0)
-                {
-                    strSElectedScrewsFromTray2 = "\((sortedArray2.object(at: iCount))as AnyObject)"
-                }
-                else
-                {
-                    strSElectedScrewsFromTray2 = strSElectedScrewsFromTray2 + ", " + "\((sortedArray2.object(at: iCount)) as AnyObject)"
-                }
-            }
-            let predicate3 = NSPredicate(format: "SELF.TRAY_GROUP = 3");
-            
-            let arr3 = ((overrideHoles as AnyObject).filtered(using: predicate3) as NSArray).mutableCopy() as! NSArray
-            
-            var sortedArray3 = (arr3.value(forKey: "HOLE_NUMBER") as! NSArray).sorted {
-                (s1, s2) -> Bool in return (s1 as AnyObject).localizedStandardCompare(s2 as! String) == .orderedAscending
-                } as NSArray
-            
-            for iCount in 0..<sortedArray3.count
-            {
-                if(strSElectedScrewsFromTray3.count == 0)
-                {
-                    strSElectedScrewsFromTray3 = "\((sortedArray3.object(at: iCount))as AnyObject)"
-                }
-                else
-                {
-                    strSElectedScrewsFromTray3 = strSElectedScrewsFromTray3 + ", " + "\((sortedArray3.object(at: iCount)) as AnyObject)"
-                }
-            }
-        }
-        var emptyScrewsString1 = 0
-        var emptyScrewsString2 = 0
-        var emptyScrewsString3 = 0
+        var strFinalGroup = ""
         
-        if(strSElectedScrewsFromTray1.count > 0)
+        for iCount in 0..<overrideHoles.count
         {
-            strSElectedScrewsFromTray1 = strSElectedScrewsFromTray1 + " from Group 1."
-        }
-        else
-        {
-            emptyScrewsString1 = 1
+            strFinal = strFinal + (arrSelectedScrews.object(at: iCount) as! String)
             
-            strEmptyString = "No edits for Group 1."
-        }
-        if(strSElectedScrewsFromTray2.count > 0)
-        {
-            strSElectedScrewsFromTray2 = strSElectedScrewsFromTray2 + " from Group 2."
-        }
-        else
-        {
-            emptyScrewsString2 = 1
+            strFinalGroup = "\(((overrideHoles.object(at: iCount)) as! NSDictionary).value(forKey: "TRAY_GROUP") as AnyObject)"
             
-            if emptyScrewsString1 == 1
+            if iCount !=  arrSelectedScrews.count-1
             {
-                strEmptyString = "No edits for Group 1 and 2."
+                strFinal = strFinal + " from group " + "\(strFinalGroup), "
             }
             else
             {
-                strEmptyString = "No edits for Group 2."
-            }
-        }
-        if(strSElectedScrewsFromTray3.count > 0)
-        {
-            strSElectedScrewsFromTray3 = strSElectedScrewsFromTray3 + " from Group 3."
-        }
-        else
-        {
-            emptyScrewsString3 = 1
-            
-            if emptyScrewsString1 == 1 && emptyScrewsString2 == 1
-            {
-                strEmptyString = "No edits for Groups 1, 2, and 3."
-            }
-            else if emptyScrewsString1 == 1 && emptyScrewsString2 == 0
-            {
-                strEmptyString = "No edits for Groups 1 and 3."
-            }
-            else if emptyScrewsString1 == 0 && emptyScrewsString2 == 1
-            {
-                strEmptyString = "No edits for Groups 2 and 3."
-            }
-            else
-            {
-                strEmptyString = "No edits for Group 3."
-            }
-        }
-        
-        var attrString = NSMutableAttributedString.init()
-        
-        if strEmptyString.count == 0
-        {
-            attrString = NSMutableAttributedString.init(string: "Selected Implants:\nTray Position(s) \(strSElectedScrewsFromTray1)\nTray Position(s) \(strSElectedScrewsFromTray2)\nTray Position(s) \(strSElectedScrewsFromTray3).", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-        }
-        else
-        {
-            if emptyScrewsString1 == 1 && emptyScrewsString2 == 1 && emptyScrewsString3 == 1
-            {
-                attrString = NSMutableAttributedString.init(string: "Selected Implants:\n\(strEmptyString)", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-            }
-            else
-            {
-                if emptyScrewsString1 == 1 && emptyScrewsString2 == 1 && emptyScrewsString3 == 0
-                {
-                    attrString = NSMutableAttributedString.init(string: "Selected Implants:\nTray Position(s) \(strSElectedScrewsFromTray3)\n\(strEmptyString)", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                }
-                else if emptyScrewsString1 == 1 && emptyScrewsString2 == 0 && emptyScrewsString3 == 1
-                {
-                    attrString = NSMutableAttributedString.init(string: "Selected Implants:\nTray Position(s) \(strSElectedScrewsFromTray2)\n\(strEmptyString)", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                }
-                else if emptyScrewsString1 == 0 && emptyScrewsString2 == 1 && emptyScrewsString3 == 1
-                {
-                    attrString = NSMutableAttributedString.init(string: "Selected Implants:\nTray Position(s) \(strSElectedScrewsFromTray1)\n\(strEmptyString)", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                }
-                else if emptyScrewsString1 == 1 && emptyScrewsString2 == 0 && emptyScrewsString3 == 0
-                {
-                    //attrString = NSMutableAttributedString.init(string: "Selected Implants:\n\(strSElectedScrewsFromTray2)\n\(strSElectedScrewsFromTray3)\n\(strEmptyString).", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                    
-                    attrString = NSMutableAttributedString.init(string: "Selected Implants:\n\(strEmptyString)\nTray Position(s) \(strSElectedScrewsFromTray2)\nTray Position(s) \(strSElectedScrewsFromTray3).", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                }
-                else if emptyScrewsString1 == 0 && emptyScrewsString2 == 0 && emptyScrewsString3 == 1
-                {
-                    attrString = NSMutableAttributedString.init(string: "Selected Implants:\nTray Position(s) \(strSElectedScrewsFromTray1)\nTray Position(s) \(strSElectedScrewsFromTray2)\n\(strEmptyString)", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                }
-                else if emptyScrewsString1 == 0 && emptyScrewsString2 == 1 && emptyScrewsString3 == 0
-                {
-                    //attrString = NSMutableAttributedString.init(string: "Selected Implants:\n\(strSElectedScrewsFromTray1)\n\(strSElectedScrewsFromTray3)\n\(strEmptyString).", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                    
-                     attrString = NSMutableAttributedString.init(string: "Selected Implants:\nTray Position(s) \(strSElectedScrewsFromTray1)\n\(strEmptyString)\nTray Position(s) \(strSElectedScrewsFromTray3).", attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16), NSForegroundColorAttributeName:UIColor.black])
-                }
+                strFinal = strFinal + " from group " + "\(strFinalGroup)"
             }
         }
         
@@ -411,7 +218,21 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
         {
             differentiateAlertView = 0
             
-            CommanMethods.alertViewForPostSurgery(alertView: self.alertView, message: attrString, viewController: self, type: 1)
+            CommanMethods.alertView(alertView: self.alertView, message: strFinal as NSString, viewController: self, type: 1)
+            //            let alert : UIAlertController = UIAlertController(title: "Selected Values", message: strFinal, preferredStyle:.alert)
+            //            let alertAction = UIAlertAction (title: "Ok", style: .default,handler: {(action) in
+            //                self.dismiss(animated: true, completion: nil)
+            //
+            //                /*------------------------------------------------------
+            //                 Unwind segue to edit implant screen
+            //                 ------------------------------------------------------*/
+            //
+            //                self.callUpdateImageRecognitionApi()
+            //
+            //               // self.performSegue(withIdentifier: "backToEditImplants", sender: nil)
+            //            })
+            //            alert.addAction(alertAction)
+            //            self.present(alert, animated: true, completion: nil)
         }
         else
         {
@@ -443,6 +264,7 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
                 
                 json2 = try JSONSerialization.jsonObject(with: jsonData1, options: [])
                 
+                
                 if let object = json as? [String: Any]
                 {
                     /*------------------------------------------------------
@@ -456,8 +278,7 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
                     print(objectString)
                     
                     
-                }
-                else if let object = json as? [Any]
+                } else if let object = json as? [Any]
                 {
                     /*------------------------------------------------------
                      json is an array
@@ -494,10 +315,10 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
         /*------------------------------------------------------
          Api call imageRecognition by passing the data of screw details in json data format
          
-         Note:
-         Updated on : 15-Dec-2017
-         Updation reason : the image recognition api for tray-2 and tray-1 is different and because of that we will be separating the api name by checking the arrTrayType value as tray 1 or tray 2
-         ------------------------------------------------------*/
+        Note:
+        Updated on : 15-Dec-2017
+        Updation reason : the image recognition api for tray-2 and tray-1 is different and because of that we will be separating the api name by checking the arrTrayType value as tray 1 or tray 2
+        ------------------------------------------------------*/
         var strApiName = ""
         
         if(arrTrayType.object(at: trayNumber-1) as! NSString == "tray 1")
@@ -518,11 +339,12 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
                 {
                     CommanMethods.removeProgrssView(isActivity: true)
                     CommanMethods.alertView(message: Constants.kstrWrongResponse as NSString , viewController: self, type: 1)
+                    //                    self.showOKAlert(title :Constants.kstrError ,message: Constants.kstrWrongResponse)
                     return
                 }
             }
             
-            if response != nil && response![Constants.kstatusFlag] as! Int == 0
+            if response != nil && response![Constants.kstatusFlag] as! Int != 1
             {
                 let preimage = self.dicForImageRecognitionResponse[Constants.kPreImage] as! String
                 self.dicForImageRecognitionResponse = response!
@@ -544,6 +366,7 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
             else
             {
                 CommanMethods.alertView(message: Constants.kAlert_Please_take_picture_again as NSString , viewController: self, type: 1)
+                //                self.showOKAlert(title :Constants.kstrError ,message: Constants.kAlert_Please_take_picture_again)
                 
                 DispatchQueue.main.async {
                     CommanMethods.removeProgrssView(isActivity: true)
@@ -596,7 +419,7 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
             {
                 self.differentiateAlertView = 1
                 
-                CommanMethods.alertView(alertView: self.alertView, message: Constants.kPostop_Tray_Configuration_Updated as NSString, viewController: self, type: 1)
+                CommanMethods.alertView(alertView: self.alertView, message: Constants.kAlert_Image_updated as NSString, viewController: self, type: 1)
                 
                 //                    actionsheet.message = Constants.kAlert_Image_updated
                 //                    okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -615,7 +438,7 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
             }
             else
             {
-                CommanMethods.alertView(alertView: self.alertView, message: "Please Try Again" as NSString, viewController: self, type: 1)
+                CommanMethods.alertView(alertView: self.alertView, message: "Wrong Response" as NSString, viewController: self, type: 1)
                 
                 //                    actionsheet.message = "Wrong Response"
                 //                    okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -847,86 +670,6 @@ class SelectedImplantViewController: UIViewController,UICollectionViewDataSource
             {
                 cell.btnPin.backgroundColor = UIColor.red
             }
-            else
-            {
-                cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-            }
-            if(tempOverrideHoles.count > 0)
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(dic["HOLE_NUMBER"]!)' AND SELF.TRAY_GROUP == \(dic["TRAY_GROUP"]!)");
-
-                let arrOverride = tempOverrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-                
-                if arrOverride.count > 0
-                {
-                    let dic = arrOverride[0] as [String:Any]
-                    if((dic["SCREW_STATUS"] as! String) == "Present")
-                    {
-                        cell.btnPin.backgroundColor = UIColor.green
-                    }
-                    else if((dic["SCREW_STATUS"] as! String) == "other")
-                    {
-                        cell.btnPin.backgroundColor = UIColor.yellow
-                    }
-                    else if((dic["SCREW_STATUS"] as! String) == "Removed")
-                    {
-                        cell.btnPin.backgroundColor = UIColor.red
-                    }
-                    else
-                    {
-                        cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-                    }
-                }
-            }
-        }
-        else if(tempOverrideHoles.count > 0)
-        {
-            var arrOverride : [[String:Any]] = [[String:Any]]()
-            
-            if collectionView == screwsCollectionVw
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(strSection)' AND SELF.TRAY_GROUP == 1");
-                
-                arrOverride = tempOverrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-                
-            }
-            else if collectionView == collectionViewGrpB
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(strSection)' AND SELF.TRAY_GROUP == 2");
-                
-                arrOverride = tempOverrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-            }
-            else
-            {
-                let predicate1 = NSPredicate(format: "SELF.HOLE_NUMBER like '\(strSection)' AND SELF.TRAY_GROUP == 3");
-                
-                arrOverride = tempOverrideHoles.filter { predicate1.evaluate(with: $0) } as! [[String : Any]];
-            }
-            
-            if(arrOverride.count > 0)
-            {
-                let dic = arrOverride[0] as [String:Any]
-                if((dic["SCREW_STATUS"] as! String) == "Present")
-                {
-                    cell.btnPin.backgroundColor = UIColor.green
-                }
-                else if((dic["SCREW_STATUS"] as! String) == "other")
-                {
-                    cell.btnPin.backgroundColor = UIColor.yellow
-                }
-                else if((dic["SCREW_STATUS"] as! String) == "Removed")
-                {
-                    cell.btnPin.backgroundColor = UIColor.red
-                }
-                else
-                {
-                    cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-                }
-            }
-            else
-            {
-                cell.btnPin.backgroundColor = UIColor(red: 83.0/255.0, green: 119.0/255.0, blue: 178.0/255.0, alpha: 1.0)
-            }
         }
         else
         {
@@ -1156,6 +899,7 @@ class collectionCell:UICollectionViewCell
                     arr = objSelectedImpantVwController.arrGroupC.filter { predicate1.evaluate(with: $0) };
                 }
                 
+                
                 if(arr.count == 0)
                 {
                     //var dicForoverrideHoles:[String:Any] = [:]
@@ -1181,26 +925,7 @@ class collectionCell:UICollectionViewCell
                         dic.setValue(0, forKey: "SCREW_ID")
                         dic.setValue(btnPin.tag, forKey: "TRAY_GROUP")
                         
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
-                        }
-                        
                         objSelectedImpantVwController.overrideHoles.remove(dic)
-                        objSelectedImpantVwController.tempOverrideHoles.remove(t)
                     }
                     else
                     {
@@ -1210,26 +935,7 @@ class collectionCell:UICollectionViewCell
                         dic.setValue(0, forKey: "SCREW_ID")
                         dic.setValue(btnPin.tag , forKey: "TRAY_GROUP")
                         
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
-                        }
-                        
                         objSelectedImpantVwController.overrideHoles.add(dic as! [String : Any])
-                        objSelectedImpantVwController.tempOverrideHoles.add(t as! [String : Any])
                     }
                 }
                 else
@@ -1250,27 +956,7 @@ class collectionCell:UICollectionViewCell
                         dic["SCREW_ID"] = 0
                         dic["TRAY_GROUP"] = btnPin.tag
                         
-                        
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
-                        }
-                        
                         objSelectedImpantVwController.overrideHoles.remove(dic)
-                        objSelectedImpantVwController.tempOverrideHoles.remove(t)
                     }
                     else
                     {
@@ -1278,29 +964,8 @@ class collectionCell:UICollectionViewCell
                         dic["HOLE_NUMBER"] = "\(strSection)"
                         dic["SCREW_ID"] = 0
                         dic["TRAY_GROUP"] = btnPin.tag
-                     
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
-                        }
-                        
-                        
                         
                         objSelectedImpantVwController.overrideHoles.add(dic)
-                        objSelectedImpantVwController.tempOverrideHoles.add(t)
                     }
                 }
                 
@@ -1361,26 +1026,7 @@ class collectionCell:UICollectionViewCell
                         dic.setValue(1, forKey: "SCREW_ID")
                         dic.setValue(btnPin.tag, forKey: "TRAY_GROUP")
                         
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
-                        }
-                        
                         objSelectedImpantVwController.overrideHoles.remove(dic)
-                        objSelectedImpantVwController.tempOverrideHoles.remove(t)
                     }
                     else
                     {
@@ -1389,26 +1035,7 @@ class collectionCell:UICollectionViewCell
                         dic.setValue(1, forKey: "SCREW_ID")
                         dic.setValue(btnPin.tag, forKey: "TRAY_GROUP")
                         
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
-                        }
-                        
                         objSelectedImpantVwController.overrideHoles.add(dic)
-                        objSelectedImpantVwController.tempOverrideHoles.add(t)
                         
                     }
                 }
@@ -1429,26 +1056,7 @@ class collectionCell:UICollectionViewCell
                         dic["SCREW_ID"] = 1
                         dic["TRAY_GROUP"] = btnPin.tag
                         
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
-                        }
-                        
                         objSelectedImpantVwController.overrideHoles.remove(dic)
-                        objSelectedImpantVwController.tempOverrideHoles.remove(t)
                     }
                     else
                     {
@@ -1459,44 +1067,18 @@ class collectionCell:UICollectionViewCell
                          Here if the button back ground is yellow then we are sending screwid 0 other wise we are sending the screwid 1
                          ------------------------------------------------------*/
                         
-                        
-                        
                         if(btnPin.backgroundColor == UIColor.yellow || btnPin.backgroundColor == UIColor.green)
                         {
                             dic["SCREW_ID"] = 0
-                            
                         }
                         else
                         {
                             dic["SCREW_ID"] = 1
-                            
-                        }
-                        
-                        var t = dic
-                        if(btnPin.backgroundColor == UIColor.red)
-                        {
-                            t["SCREW_STATUS"] = "Present"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.green)
-                        {
-                            t["SCREW_STATUS"] = "Removed"
-                        }
-                        else if(btnPin.backgroundColor == UIColor.yellow)
-                        {
-                            t["SCREW_STATUS"] = "-"
-                        }
-                        else
-                        {
-                            t["SCREW_STATUS"] = "other"
                         }
                         
                         dic["TRAY_GROUP"] = btnPin.tag
                         
                         objSelectedImpantVwController.overrideHoles.add(dic)
-                        
-                        
-                        objSelectedImpantVwController.tempOverrideHoles.add(t)
-                        
                     }
                     
                 }

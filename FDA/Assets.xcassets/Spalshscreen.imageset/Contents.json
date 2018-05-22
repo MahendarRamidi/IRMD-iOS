@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Spalshscreen@1x.png",
+      "filename" : "Spalshscreen.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Spalshscreen@2x.png",
+      "filename" : "Spalshscreen-1.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Spalshscreen@3x.png",
+      "filename" : "Spalshscreen-2.png",
       "scale" : "3x"
     }
   ],

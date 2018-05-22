@@ -168,33 +168,7 @@ class CommanMethods: UIViewController,UINavigationControllerDelegate{
         }
         alertView.lblMessage.text = message as String
     }
-    
-    /*------------------------------------------------------
-     The Below method is required if any action is to be taken on the click of ok or cancel button. The alert view instance will get created in the caller class with delegate self and that instance will be sent here so to call the delegate method of ok button in respective caller class
-     1. if type = 1, display basic alert
-     2. else if type = 2, display alert with textbox inside
-     ------------------------------------------------------*/
-    static func alertViewForPostSurgery(alertView : CustomAlertViewController, message : NSAttributedString , viewController : UIViewController, type : Int) -> Void
-    {
-        viewController.addChildViewController(alertView)
-        alertView.view.bounds = viewController.view.bounds
-        
-        viewController.view.addSubview(alertView.view)
-        
-        alertView.didMove(toParentViewController: viewController)
-        
-        if(type == 1)
-        {
-            alertView.vwAlertBasic.isHidden = false
-            alertView.vwEnterTrayID.isHidden = true
-        }
-        else
-        {
-            alertView.vwAlertBasic.isHidden = true
-            alertView.vwEnterTrayID.isHidden = false
-        }
-        alertView.lblMessage.attributedText = message
-    }
+
     /*------------------------------------------------------
      The below method will be called from below classes
      -> AddTrayController

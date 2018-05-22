@@ -23,7 +23,7 @@ class AcceptTrayStep1ViewController: UIViewController,UIImagePickerControllerDel
     var dicForsaveTrays :[String: Any] = [:]
     let imagePicker = UIImagePickerController.init()
     var arrTrayBaseline :[[String: Any]]! = [[String: Any]]()
-    var arrTrayData : NSMutableArray = NSMutableArray.init()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -56,43 +56,33 @@ class AcceptTrayStep1ViewController: UIViewController,UIImagePickerControllerDel
                  ------------------------------------------------------*/
                 for i in (0..<response!.count)
                 {
-                    let tray = response![i]
-                    
+                    let tray = response![i] 
                     let dic = NSMutableDictionary()
-                   
-                    let dicForStatus = NSMutableDictionary()
-                    
                     dic.setValue("\(tray[Constants.kstrholeNumber]!)", forKey: Constants.kHOLE_NUMBER)
-                    dicForStatus.setValue("\(tray[Constants.kstrholeNumber]!)", forKey: Constants.kHOLE_NUMBER)
                     
-                    if ((tray[Constants.kscrewStatus]! as! String).lowercased() == "present"
-                        || (tray[Constants.kscrewStatus]! as! String).lowercased() == "other")
+                    if let _ = (tray[Constants.kscrewId] as? [String:Any])
                     {
-                        dic.setValue(1, forKey: Constants.kSCREW_ID)
-                        dicForStatus.setValue(1, forKey: Constants.kSCREW_ID)
+                        let str = (tray[Constants.kscrewId]! as! [String:Any])["id"]
+                        dic.setValue("\(str!)", forKey: Constants.kSCREW_ID)
                     }
                     else
                     {
-                        dic.setValue(0, forKey: Constants.kSCREW_ID)
-                        dicForStatus.setValue(0, forKey: Constants.kSCREW_ID)
+                        dic.setValue("", forKey: Constants.kSCREW_ID)
                     }
 
                     dic.setValue((tray[Constants.ktrayGroup]! as! NSString).integerValue, forKey: Constants.kTRAY_GROUP)
-                    
-                    dicForStatus.setValue((tray[Constants.ktrayGroup]! as! NSString).integerValue, forKey: Constants.kTRAY_GROUP)
-                    dicForStatus.setValue("\(tray[Constants.kscrewStatus]!)", forKey: Constants.kSCREW_STATUS)
+                    dic.setValue("\(tray[Constants.kscrewStatus]!)", forKey: Constants.kSCREW_STATUS)
+
                     /*------------------------------------------------------
                      If the data already present in arrayTrayBaseline then it will get append in array else create a new array
                      ------------------------------------------------------*/
                     if(self.arrTrayBaseline != nil)
                     {
                         self.arrTrayBaseline.append(dic as! [String : Any])
-                        self.arrTrayData.add(dicForStatus)
                     }
                     else
                     {
                         self.arrTrayBaseline = [dic as! Dictionary<String, Any>]
-                        self.arrTrayData =  [dicForStatus as! Dictionary<String, Any>]
                     }
                     
                 }
@@ -184,7 +174,6 @@ class AcceptTrayStep1ViewController: UIViewController,UIImagePickerControllerDel
             let destVC = segue.destination as! AcceptTrayStep2ViewController
             destVC.trayNumber = trayNumber
             destVC.arrTrayBaseline = self.arrTrayBaseline
-            destVC.arrTrayData = self.arrTrayData
             destVC.totalNumberOfTrays = totalNumberOfTrays
             destVC.image = self.decodedimage
             destVC.dicForsaveTrays = dicForsaveTrays
@@ -365,7 +354,7 @@ class AcceptTrayStep1ViewController: UIViewController,UIImagePickerControllerDel
                 /*------------------------------------------------------
                  if response then create decodedimage using response image data and display
                  ------------------------------------------------------*/
-                if response != nil && response![Constants.kstatusFlag] as! Int == 0 {
+                if response != nil && response![Constants.kstatusFlag] as! Int != 1 {
                     
                     self.dicForImageRecognitionResponse = response!
                     self.dicForImageRecognitionResponse [Constants.kPreImage] = strBase64
@@ -413,6 +402,8 @@ class AcceptTrayStep1ViewController: UIViewController,UIImagePickerControllerDel
             updateTrayPictureWebservice().postTrayImage([:], urlString, imageView.image!, { (response, err) in
                 
                 CommanMethods.removeProgrssView(isActivity: true)
+             
+                CommanMethods.alertView(alertView: self.alertView, message: Constants.kAlert_Image_updated as NSString, viewController: self, type: 1)
                 
 //                let actionsheet = UIAlertController.init(title: "", message: "", preferredStyle: UIAlertControllerStyle.alert)
                 
@@ -433,7 +424,7 @@ class AcceptTrayStep1ViewController: UIViewController,UIImagePickerControllerDel
                 {
                     self.differentiateAlertView = 0
                     
-                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kPost_Surgery_Image_Captured as NSString, viewController: self, type: 1)
+                    CommanMethods.alertView(alertView: self.alertView, message: Constants.kAlert_Image_updated as NSString, viewController: self, type: 1)
 //                    okButton = UIAlertAction(title: "Ok", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 //
 //

@@ -241,14 +241,9 @@ class SurgeryViewWebservises: BaseOperation {
             str = Constants.getsearchtraybyid + "/\(json[Constants.kstrtrayId]!)"
             break
             
-        case Constants.ksearchtraybytraynumber:
+        case Constants.ksearchtraybyidforassigntray:
             
-            str = Constants.ksearchtraybytraynumber + "/\(json[Constants.kstrtrayId]!)"
-            break
-            
-        case Constants.ksearchtraybynumberforassigntray:
-            
-            str = Constants.ksearchtraybynumberforassigntray + "/\(json[Constants.kstrtrayId]!)"
+            str = Constants.ksearchtraybyidforassigntray + "/\(json[Constants.kstrtrayId]!)"
             break
             
         case Constants.getsearchtraybybarcode:

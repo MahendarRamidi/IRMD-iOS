@@ -223,13 +223,14 @@ class CommanAPIs: BaseOperation {
             request = URLRequest(url: url)
             request?.httpMethod = "GET"
         }*/
+        
         var request: URLRequest?
         if let url = URL(string: Constants.baseApiURL + urlString) {
             request = URLRequest(url: url)
             request?.httpMethod = "POST"
             request?.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            request?.addValue((UserDefaults.standard.value(forKey: "latestSettings")! as! NSDictionary).value(forKey: "token")! as! String, forHTTPHeaderField: "Authorization")
             request?.httpBody = jsonData
+            
         }
         
         

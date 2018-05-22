@@ -34,7 +34,7 @@ class Constants: UIViewController {
     
     //phase-1 URL
     /*------------------------------------------------------*/
-  //  static let baseApiURL = "http://52.5.157.28:8080/imagerecognition-web/"
+    static let baseApiURL = "http://52.5.157.28:8080/imagerecognition-web/"
     /*------------------------------------------------------*/
     
     //phase-2 URL
@@ -42,11 +42,8 @@ class Constants: UIViewController {
     static let baseApiURL = "http://192.192.8.149:8081/imagerecognition-web/"
      ------------------------------------------------------*/
     
-    //Client Common server
-    static let baseApiURL = "http://ec2-52-5-157-28.compute-1.amazonaws.com:8080/imagerecognition-web/"
-    
-    //Developer side common server
-  //  static let baseApiURL = "http://192.192.7.154:7171/imagerecognition-web/"
+    //Common server
+//    static let baseApiURL = "http://192.192.7.154:7171/imagerecognition-web/"
     
     static let getPatients = "patient/getpatients"
     static let getSurgeons = "getSurgeons"
@@ -71,22 +68,16 @@ class Constants: UIViewController {
     static let getassemblyimagebyassemblyid = "getassemblyimagebyassemblyid"
     static let createassemblyclone = "createassemblyclone"
     static let ksearchtraybyidforassigntray = "searchtraybyidforassigntray"
-//    http://192.192.7.154:7171/imagerecognition-web/searchtraybynumberforassigntray/aa11
-//    http://192.192.7.154:7171/imagerecognition-web/searchtraybytraynumber/aa11
-    static let ksearchtraybynumberforassigntray = "searchtraybynumberforassigntray"
-    static let ksearchtraybytraynumber = "searchtraybytraynumber"
     static let ksearchtraybybarcodeforassigntray = "searchtraybybarcodeforassigntray"
     static let ksearchtraybybarcodeforassembletray = "searchtraybybarcodeforassembletray"
     //createassemblyclone
     
     static let getrelatedcasedetails = "getrelatedcasedetails"
     
-    static let imageRecognition = "http://ec2-52-22-159-14.compute-1.amazonaws.com:8080/"
-    
-     // static let imageRecognition = "http://52.22.159.14:8080/"
+    static let imageRecognition = "http://34.224.100.96:8888/"
     // image recognition url for tray 2
-   // static let imageRecognitionTray2 = "http://52.22.159.14:8080/tray2"
-    static let imageRecognitionTray2 = "http://ec2-52-22-159-14.compute-1.amazonaws.com:8080/tray2"
+    static let imageRecognitionTray2 = "http://34.224.100.96:8888/tray2"
+//    static let imageRecognitionTray2 = "http://34.224.41.41:8888/"
     
     //Comman constants
     static let kTrayAssembly = "TrayAssembly"
@@ -121,11 +112,11 @@ class Constants: UIViewController {
     
     //Alert view messages
     
-    static let kAlert_Please_select_screw = "Please select implant."
+    static let kAlert_Please_select_screw = "Please select screw."
     static let kAlert_Choose_from_Gallery = "Choose from Gallery"
     static let kAlert_Sorry_this_device_has_no_camera = "Sorry, this device has no camera"
     static let kGoToScanImplant = "GoToScanImplant"
-    static let kAlert_Please_take_picture_again = "Please Retake Picture"
+    static let kAlert_Please_take_picture_again = "Please take picture again."
     static let kAlert_No_Camera = "No Camera"
     static let kshowLanding = "showLanding"
     static let kAlert_Select_Image = "Select Image"
@@ -133,19 +124,17 @@ class Constants: UIViewController {
     static let kGoToImagePreview = "GoToImagePreview"
     static let kAlert_Only_images_allowed = "Only images allowed."
     static let ksuccessfullLogin = "successfullLogin"
-    static let kAlert_Wrong_Username_Or_Password = "Wrong Username or Password"
-    static let kAlert_Please_enter_First_Name = "Please enter First Name"
-    static let kAlert_Please_enter_Last_Name = "Please enter Last Name"
-    static let kAlert_Please_Email = "Please Email"
-    static let kAlert_Please_select_user_role = "Please select user role"
-    static let kAlert_Please_enter_valid_email = "Please enter valid email"
+    static let kAlert_Wrong_Username_Or_Password = "Wrong Username Or Password."
+    static let kAlert_Please_enter_First_Name = "Please enter First Name."
+    static let kAlert_Please_enter_Last_Name = "Please enter Last Name."
+    static let kAlert_Please_Email = "Please Email."
+    static let kAlert_Please_select_user_role = "Please select user role."
+    static let kAlert_Please_enter_valid_email = "Please enter valid email."
     static let kAlert_Duplicate_Record_situation_with_input_parameters = "Duplicate Record situation with input parameters"
-    static let kAlert_Duplicate_Record = "Duplicate Record"
+    static let kAlert_Duplicate_Record = "Duplicate Record."
     static let kNo_assembly_image_available = "No assembly image available"
     static let kAlert_case_details_are_not_bind = "This tray has not been associated with any case"
     static let kAlert_Image_updated = "Image updated"
-    static let kPost_Surgery_Image_Captured = "Post-Surgery Image Captured"
-    static let kPostop_Tray_Configuration_Updated = "Postop Tray Configuration Updated"
     static let kAlert_JSON_is_invalid = "JSON is invalid"
     static let kAlert_This_tray_has_already_been_assigned_to_a_case = "This tray has already been assigned to a case"
     
@@ -159,7 +148,6 @@ class Constants: UIViewController {
     static let ktrayGroup = "trayGroup"
     static let kSelectImplantTray2ViewController = "SelectImplantTray2ViewController"
     static let kSelectedImplantViewController = "SelectedImplantViewController"
-    static let kScanBarcodeHomeViewController = "ScanBarcodeHomeViewController"
     static let kdrawerClassSurgerySession = "drawerClassSurgerySession"
     static let kstrtrayID = "trayID"
     static let kcaseID  = "caseID"
@@ -169,17 +157,14 @@ class Constants: UIViewController {
     static let kstrLoading = "Loading"
     static let kstrmessage = "message"
     static let kstrFailed = "Failed"
-    static let kscrewID = "screwID"
     static let kstrError = "Error"
     static let kSuccess = "Success"
-    static let kPicture_has_been_uploaded = "Assembly Image Uploaded"
-    static let kPre_Surgery_Image_Updated = "Pre-Surgery Image Updated"
-    static let kstrWrongResponse = "Please Try Again"
+    static let kstrWrongResponse = "Wrong Response."
     static let kmsgNoRecord = "No Record Found"
     static let kstrid = "id"
     static let kUserID = "UserID"
-    static let kAlertPlease_enter_email = "Please Enter Email"
-    static let kAlert_Please_enter_Password = "Please Enter Password"
+    static let kAlertPlease_enter_email = "Please enter email."
+    static let kAlert_Please_enter_Password = "Please enter Password."
     static let kstrPreAssembly = "preAssembly"
     static let kstrrefAssembly = "refAssembly"
     static let kstrcaseDetails = "caseDetails"
@@ -191,7 +176,7 @@ class Constants: UIViewController {
     static let kproduct = "product"
     static let kdescription = "description"
     static let kMsgRecordNotFound = "Cannot Record"
-    static let kMsgWrongResponse = "Please Try Again"
+    static let kMsgWrongResponse = "Wrong Response"
     static let kOk = "Ok"
     static let kassemblyDetails = "assemblyDetails"
     static let kscrewStatus = "screwStatus"
@@ -223,7 +208,6 @@ class Constants: UIViewController {
     static let kSCREW_STATUS = "SCREW_STATUS"
     static let ktray_1 = "tray 1"
     static let kTray_1 = "Tray 1"
-    static let kTray_2 = "Tray 2"
     static let ktray_2 = "tray 2"
     static let knewAssemblyID = "newAssemblyID"
     static let ktrayDetailFromScanBarcode = "trayDetailFromScanBarcode"
@@ -231,7 +215,6 @@ class Constants: UIViewController {
     static let kFinish_and_Go_To_Post_Surgery = "Finish and Go To Post Surgery"
     static let kGoToAssembleTrayDetail = "GoToAssembleTrayDetail"
     static let kmsgTrayHasBennCloned = "Tray has been cloned."
-    static let kTray_Assembly_Has_Been_Edited = "Tray Assembly Edited"
     static let kPresurgeryAcceptAndTakePictureViewController =  "PresurgeryAcceptAndTakePictureViewController"
     static let knew_Assigned_ID = "new_Assigned_ID"
     static let kbackToEditImplants = "backToEditImplants"

@@ -17,8 +17,6 @@ class TrayDetailViewController: UIViewController,UITableViewDelegate,UITableView
     @IBOutlet var lblSurgeryType: UILabel!
     @IBOutlet var lbltrayNumber: UILabel!
     
-    @IBOutlet weak var btnGroup1: UIButton!
-    @IBOutlet weak var lblPatientName: UILabel!
     @IBOutlet var lblSurgeonName: UILabel!
     
     @IBOutlet var lbldate: UILabel!
@@ -64,78 +62,42 @@ class TrayDetailViewController: UIViewController,UITableViewDelegate,UITableView
         let trayData = arrtray[trayNumber - 1]
         let tray = trayData[Constants.ktrayData] as! [String:Any]
         
-//        let dic = (tray[Constants.kstrPreAssembly] as! NSArray).firstObject as! NSDictionary
-//        let diccaseDetails = dic[Constants.kstrcaseDetails] as! NSDictionary
+        let dic = (tray[Constants.kstrPreAssembly] as! NSArray).firstObject as! NSDictionary
+        let diccaseDetails = dic[Constants.kstrcaseDetails] as! NSDictionary
         
         if let dic1 = tray[Constants.kpatient] as? NSDictionary
         {
-            lblPatientName.text = "\(dic1[Constants.kname]!)"
+            lbltrayNumber.text = "\(dic1[Constants.kname]!)"
         }
         else
         {
-            let dic = (tray[Constants.kstrPreAssembly] as! NSArray).firstObject as! NSDictionary
-            let diccaseDetails = dic[Constants.kstrcaseDetails] as! NSDictionary
-            let dic2 = diccaseDetails[Constants.kpatient] as! NSDictionary
-            lblPatientName.text = "\(dic2[Constants.kname]!)"
+            let dic1 = diccaseDetails[Constants.kpatient] as! NSDictionary
+            lbltrayNumber.text = "\(dic1[Constants.kname]!)"
         }
         
         lblTrayId.text = " Tray Assembly " + "\((dicForsaveTrays[Constants.kstrtrayId]! as! [Any])[trayNumber-1])"
         
         tblListing.tableFooterView = UIView()
-        if let dic1 = tray[Constants.kpatient] as? NSDictionary
-        {
-            lblSurgeonName.text = tray[Constants.ksurgeonName] as? String
-        }
-        else
-        {
-            let dic = (tray[Constants.kstrPreAssembly] as! NSArray).firstObject as! NSDictionary
-            let diccaseDetails = dic[Constants.kstrcaseDetails] as! NSDictionary
-            lblSurgeonName.text = "\(diccaseDetails[Constants.ksurgeonName]!)"
-        }
-       
+        
+        lblSurgeonName.text = diccaseDetails[Constants.ksurgeonName] as? String
         //lbldate.text = diccaseDetails["caseDate"] as? String
         
-        var arrr = NSMutableArray.init()
-        
-        if let surgeryType = tray[Constants.ksurgeryType] as? [String:Any]
+        if let surgeryType = diccaseDetails[Constants.ksurgeryType] as? [String:Any]
         {
             lblSurgeryType.text = surgeryType[Constants.ksurgeryType] as? String
         }
-        else
-        {
-            let dic = (tray[Constants.kstrPreAssembly] as! NSArray).firstObject as! NSDictionary
-            let diccaseDetails = dic[Constants.kstrcaseDetails] as! NSDictionary
-            let surgeryType = diccaseDetails[Constants.ksurgeryType]! as? [String:Any]
-            lblSurgeryType.text = "\(String(describing: surgeryType!["surgeryType"]!))"
-            print("\(String(describing: surgeryType!["surgeryType"]!))")
-        }
-        if ((tray["caseDate"]) != nil)
-        {
-            if (tray["caseDate"]! as! String).count > 0
-            {
-                let str = (tray[Constants.kstrcaseDate]! as? String)
-                let df = DateFormatter()
-                //df.dateFormat = "MM-dd-yyyy"
-                df.dateFormat = "yyyy-MM-dd hh:mm:ss"
-                let date = df.date(from: str as! String)
-                
-                df.dateFormat = "MM-dd-yyyy"
-                lbldate.text = df.string(from: date!)
-            }
-        }
-        else
-        {
-            let dic = (tray[Constants.kstrPreAssembly] as! NSArray).firstObject as! NSDictionary
-            let diccaseDetails = dic[Constants.kstrcaseDetails] as! NSDictionary
-            let df = DateFormatter()
-            //df.dateFormat = "MM-dd-yyyy"
-            df.dateFormat = "yyyy-MM-dd hh:mm:ss"
-            let date = df.date(from: "\(diccaseDetails[Constants.kstrcaseDate]!)" )
-            lbldate.text = df.string(from: date!)
-            
-            df.dateFormat = "MM-dd-yyyy"
-            lbldate.text = df.string(from: date!)
-        }
+        
+        let str = diccaseDetails[Constants.kstrcaseDate] as? String
+        let arrr = str?.components(separatedBy: CharacterSet.whitespaces)
+        
+        let df = DateFormatter()
+        //df.dateFormat = "MM-dd-yyyy"
+        df.dateFormat = "yyyy-MM-dd"
+        let date = df.date(from: arrr![0])
+        lbldate.text = df.string(from: date!)
+        
+        df.dateFormat = "MM-dd-yyyy"
+        lbldate.text = df.string(from: date!)
         
         if trayNumber == totalNumberOfTrays
         {
@@ -170,13 +132,11 @@ class TrayDetailViewController: UIViewController,UITableViewDelegate,UITableView
          ------------------------------------------------------*/
         if(arrTrayType.object(at: trayNumber-1) as! NSString == "tray 1")
         {
-            segmentGroup.isHidden = false;
-            btnGroup1.isHidden = true
+            
         }
         else
         {
-            segmentGroup.isHidden = true;
-            btnGroup1.isHidden = false
+           // segmentGroup.isHidden = true;
         }
         
         /*------------------------------------------------------
@@ -293,7 +253,7 @@ class TrayDetailViewController: UIViewController,UITableViewDelegate,UITableView
         }
 
         cell.lblScrewLocation.text = "Location " +  (dic[Constants.kHOLE_NUMBER]! as! String)
-        cell.lblScrewId.text = "Implant ID " + (dic[Constants.kSCREW_ID]! as! String)
+        cell.lblScrewId.text = "Screw id " + (dic[Constants.kSCREW_ID]! as! String)
         cell.lblScrewId.font = UIFont.systemFont(ofSize: cell.lblScrewId.getFontForDevice())
         return cell
         
@@ -338,9 +298,6 @@ class TrayDetailViewController: UIViewController,UITableViewDelegate,UITableView
                 if vc is ScanBarcodeHomeViewController
                 {
                     popToVC = vc
-                    var popToVC1 : ScanBarcodeHomeViewController?
-                    popToVC1 = vc as? ScanBarcodeHomeViewController
-                    popToVC1?.isForAddTray = false
                 }
             }
             if let vc = popToVC
@@ -349,7 +306,7 @@ class TrayDetailViewController: UIViewController,UITableViewDelegate,UITableView
             }
             else
             {
-                /*-----------  -------------------------------------------
+                /*------------------------------------------------------
                  Updated on : 18- Dec-2017
                  The below code is modified to navigate user to landingVC instead of scan bar code VC as the button title has changed from scan bar code to finish and that will be performing the same action as finish button.
                  ------------------------------------------------------*/
