@@ -89,6 +89,7 @@
 		DC3E21971F462138006E7A69 /* ScanBarcodePatientDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3E21961F462138006E7A69 /* ScanBarcodePatientDetailsViewController.swift */; };
 		DC3E21991F462271006E7A69 /* ScanBarcodePreSurgeryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3E21981F462271006E7A69 /* ScanBarcodePreSurgeryViewController.swift */; };
 		DC3E219B1F46228B006E7A69 /* ScanBarcodePostSurgeryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC3E219A1F46228B006E7A69 /* ScanBarcodePostSurgeryViewController.swift */; };
+		DC614FEB20B4980A00357F8B /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC614FEA20B4980A00357F8B /* GameKit.framework */; };
 		F9303CAC1FA860C6008873E8 /* AssembleTrayCloneImgPreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9303CAB1FA860C6008873E8 /* AssembleTrayCloneImgPreviewViewController.swift */; };
 		F9335ACE1FA70BCA00C38532 /* AssembleTrayDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9335ACD1FA70BCA00C38532 /* AssembleTrayDetailViewController.swift */; };
 		F94016031F9E40170007E6CC /* AssembleTrayScanBarCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94016011F9E40170007E6CC /* AssembleTrayScanBarCodeViewController.swift */; };
@@ -197,6 +198,7 @@
 		DC3E21961F462138006E7A69 /* ScanBarcodePatientDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanBarcodePatientDetailsViewController.swift; sourceTree = "<group>"; };
 		DC3E21981F462271006E7A69 /* ScanBarcodePreSurgeryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanBarcodePreSurgeryViewController.swift; sourceTree = "<group>"; };
 		DC3E219A1F46228B006E7A69 /* ScanBarcodePostSurgeryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScanBarcodePostSurgeryViewController.swift; sourceTree = "<group>"; };
+		DC614FEA20B4980A00357F8B /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		F9303CAB1FA860C6008873E8 /* AssembleTrayCloneImgPreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssembleTrayCloneImgPreviewViewController.swift; sourceTree = "<group>"; };
 		F9335ACD1FA70BCA00C38532 /* AssembleTrayDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssembleTrayDetailViewController.swift; sourceTree = "<group>"; };
 		F94016011F9E40170007E6CC /* AssembleTrayScanBarCodeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssembleTrayScanBarCodeViewController.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DC614FEB20B4980A00357F8B /* GameKit.framework in Frameworks */,
 				F9B9D74F1FA8A4A600A8D6CC /* MobileCoreServices.framework in Frameworks */,
 				4876A44E1F385BFA00FFBFCA /* AVFoundation.framework in Frameworks */,
 			);
@@ -241,6 +244,7 @@
 		4876A44C1F385BF900FFBFCA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DC614FEA20B4980A00357F8B /* GameKit.framework */,
 				F9B9D74E1FA8A4A600A8D6CC /* MobileCoreServices.framework */,
 				4876A44D1F385BFA00FFBFCA /* AVFoundation.framework */,
 			);
@@ -507,12 +511,15 @@
 				TargetAttributes = {
 					48C7C0AA1F0DFD8000A91337 = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = D3W28P439J;
+						DevelopmentTeam = 9K6VQFNL7B;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 0;
+							};
+							com.apple.GameCenter = {
+								enabled = 1;
 							};
 						};
 					};
@@ -796,17 +803,18 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Niraj Hutheesing (L54ELEC6S5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D3W28P439J;
+				DEVELOPMENT_TEAM = 9K6VQFNL7B;
 				INFOPLIST_FILE = FDA/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.labInnovation.reddy;
+				PRODUCT_BUNDLE_IDENTIFIER = gov.fda.oc.innovationlab.irmd.preprod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "FDA/Helper/FDA-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -818,16 +826,17 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Niraj Hutheesing (L54ELEC6S5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D3W28P439J;
+				DEVELOPMENT_TEAM = 9K6VQFNL7B;
 				INFOPLIST_FILE = FDA/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.labInnovation.reddy;
+				PRODUCT_BUNDLE_IDENTIFIER = gov.fda.oc.innovationlab.irmd.preprod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "FDA/Helper/FDA-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

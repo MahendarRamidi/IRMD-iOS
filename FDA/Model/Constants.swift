@@ -76,7 +76,7 @@ class Constants: UIViewController {
     
     static let imageRecognition = "http://34.224.100.96:8888/"
     // image recognition url for tray 2
-    static let imageRecognitionTray2 = "http://34.224.100.96:8888/tray2"
+    static let imageRecognitionTray2 = "http://34.230.193.41:8888/tray2"
 //    static let imageRecognitionTray2 = "http://34.224.41.41:8888/"
     
     //Comman constants

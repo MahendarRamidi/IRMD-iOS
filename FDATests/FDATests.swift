@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import FDA
+
 
 class FDATests: XCTestCase {
     
