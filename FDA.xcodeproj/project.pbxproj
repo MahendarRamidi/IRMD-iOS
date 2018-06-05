@@ -511,7 +511,7 @@
 				TargetAttributes = {
 					48C7C0AA1F0DFD8000A91337 = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = 9K6VQFNL7B;
+						DevelopmentTeam = D3W28P439J;
 						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -803,11 +803,11 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Niraj Hutheesing (L54ELEC6S5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9K6VQFNL7B;
+				DEVELOPMENT_TEAM = D3W28P439J;
 				INFOPLIST_FILE = FDA/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = gov.fda.oc.innovation.irmd.preprod1;
+				PRODUCT_BUNDLE_IDENTIFIER = gov.fda.oc.innovation.irmd.preprod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -826,11 +826,11 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Niraj Hutheesing (L54ELEC6S5)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9K6VQFNL7B;
+				DEVELOPMENT_TEAM = D3W28P439J;
 				INFOPLIST_FILE = FDA/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = gov.fda.oc.innovation.irmd.preprod1;
+				PRODUCT_BUNDLE_IDENTIFIER = gov.fda.oc.innovation.irmd.preprod;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
